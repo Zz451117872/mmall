@@ -20,6 +20,7 @@ public class CategoryController {
     @Autowired
     private ICategoryService iCategoryService;
 
+    //得到 所有分类
     @RequestMapping("get_home_page_data.do")
     @ResponseBody
     public ServerResponse<List<CategoryVO>> getHomePageData()

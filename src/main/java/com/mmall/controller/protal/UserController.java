@@ -46,6 +46,7 @@ public class UserController {
         return ServerResponse.createByError();
     }
 
+    //前端登录
     @RequestMapping(value = "login.do", method= RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> login(String username, String password, HttpSession session,HttpServletResponse resp)
@@ -65,7 +66,8 @@ public class UserController {
         return response;
     }
 
-    @RequestMapping(value = "logout.do" ,method = RequestMethod.POST)
+    //登出
+  @RequestMapping(value = "logout.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> logout(HttpSession session)
     {
@@ -80,6 +82,7 @@ public class UserController {
         return ServerResponse.createBySuccess();
     }
 
+    //前端注册
     @RequestMapping(value = "register.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> register(User user)
@@ -87,6 +90,7 @@ public class UserController {
         return iUserService.register(user);
     }
 
+    //表单验证
     @RequestMapping(value = "check_valid.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> checkValid(String str,String type)
@@ -94,6 +98,7 @@ public class UserController {
         return iUserService.checkValid(str,type);
     }
 
+    //获取用户信息
     @RequestMapping(value = "get_user_info.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> getUserInfo(HttpSession session)
@@ -106,6 +111,7 @@ public class UserController {
         return ServerResponse.createByErrorMessage("无法获取用户信息");
     }
 
+    //密码忘记提示问题
     @RequestMapping(value = "forget_get_question.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> forgetGetQuestion(String username)
@@ -113,6 +119,7 @@ public class UserController {
         return iUserService.selectQuestion(username);
     }
 
+    //密码忘记提示问题验证
     @RequestMapping(value = "forget_check_answer.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> forgetCheckAnswer(String username,String question,String answer)
@@ -120,6 +127,7 @@ public class UserController {
         return iUserService.checkAnswer(username,question,answer);
     }
 
+    //密码忘记修改密码
     @RequestMapping(value = "forget_reset_password.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> forgetResetPassword(String username,String passwordNew,String token)
@@ -127,6 +135,7 @@ public class UserController {
         return iUserService.forgetResetPassword(username,passwordNew,token);
     }
 
+    //修改密码
     @RequestMapping(value = "reset_password.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> resetPassword(HttpSession session,String passwordOld,String passwordNew)
@@ -140,6 +149,7 @@ public class UserController {
         return iUserService.resetPassword(passwordOld,passwordNew,user);
     }
 
+    //更新用户信息
     @RequestMapping(value = "update_information.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> update_information(HttpSession session,User user)

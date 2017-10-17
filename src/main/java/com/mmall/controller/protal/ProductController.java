@@ -23,6 +23,7 @@ public class ProductController {
     @Autowired
     private ISolrService iSolrService;
 
+    //产品详细
     @RequestMapping("detail.do")
     @ResponseBody
     public ServerResponse<ProductVO> detail(Integer productId)
@@ -30,6 +31,7 @@ public class ProductController {
         return iProductService.getProductDetail(productId);
     }
 
+    //所有产品
     @RequestMapping("list.do")
     @ResponseBody
     public ServerResponse<PageInfo> list(@RequestParam(value = "keyword",required = false) String keyword,
@@ -43,6 +45,7 @@ public class ProductController {
     }
 
 
+    //查看产品通过solr
     @RequestMapping("get_product_list_by_solr.do")
     @ResponseBody
     public ServerResponse<PageInfo> getProductListBySolr(@RequestParam(value = "keyword",required = false)String keyword,

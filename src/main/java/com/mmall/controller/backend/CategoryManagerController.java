@@ -30,6 +30,7 @@ public class CategoryManagerController {
     @Autowired
     private ICategoryService iCategoryService;
 
+    //创建分类
     @RequestMapping("add_category.do")
     @ResponseBody
     public ServerResponse<String> addCategory(HttpSession session,String categoryName,@RequestParam(value = "parentId",defaultValue = "0") int parentId)
@@ -46,6 +47,7 @@ public class CategoryManagerController {
         return ServerResponse.createByErrorMessage("增加分类出错");
     }
 
+    //修改分类
     @RequestMapping("set_category_name.do")
     @ResponseBody
     public ServerResponse<String> setCategoryName(HttpSession session,Integer categoryId,String categoryName)
@@ -62,6 +64,7 @@ public class CategoryManagerController {
         return ServerResponse.createByErrorMessage("设置分类名称出错");
     }
 
+    //得到下一级子分类
     @RequestMapping("get_category_child.do")
     @ResponseBody
     public ServerResponse getCategoryChildByParentId(HttpSession session,Integer categoryId)
@@ -78,7 +81,7 @@ public class CategoryManagerController {
         return ServerResponse.createByErrorMessage("设置分类名称出错");
     }
 
-
+    //得到所有子孙分类
     @RequestMapping("get_category_deep_child.do")
     @ResponseBody
     public ServerResponse getCategoryDeepChildByParentId(HttpSession session,Integer categoryId)
@@ -95,7 +98,7 @@ public class CategoryManagerController {
         return ServerResponse.createByErrorMessage("设置分类名称出错");
     }
 
-
+    //得到所有底层分类
     @RequestMapping("get_all_bottom_category.do")
     @ResponseBody
     public ServerResponse<List<Category>> getAllBottomCategory(HttpSession session)

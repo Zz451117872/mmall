@@ -44,7 +44,7 @@ public class OrderController {
     @Autowired
     private OrderMapper orderMapper;
 
-
+    //创建订单
     @RequestMapping("create.do")
     @ResponseBody
     public ServerResponse create(HttpSession session, Integer shippingId )
@@ -57,6 +57,7 @@ public class OrderController {
         return iOrderService.createOrder(user.getId(),shippingId);
     }
 
+    //取消订单
     @RequestMapping("cancel.do")
     @ResponseBody
     public ServerResponse<OrderVO> cancel(HttpSession session, Long orderNo )
@@ -69,6 +70,7 @@ public class OrderController {
         return iOrderService.cancel(user.getId(),orderNo);
     }
 
+    //
     @RequestMapping("getCartOrderProduct.do")
     @ResponseBody
     public ServerResponse<OrderVO> getCartOrderProduct(HttpSession session )
@@ -81,6 +83,7 @@ public class OrderController {
         return iOrderService.getCartOrderProduct(user.getId());
     }
 
+    //订单详细
     @RequestMapping("detail.do")
     @ResponseBody
     public ServerResponse<OrderVO> detail(HttpSession session ,Long orderNo)
@@ -93,6 +96,7 @@ public class OrderController {
         return iOrderService.detail(user.getId(),orderNo);
     }
 
+    //所有订单
     @RequestMapping("list.do")
     @ResponseBody
     public ServerResponse<PageInfo> list(HttpSession session ,
@@ -166,6 +170,7 @@ public class OrderController {
     }
 
 
+    //检查支付状态
     @RequestMapping("query_order_pay_status.do")
     @ResponseBody
     public ServerResponse<Boolean> queryOrderPayStatus(HttpSession session, Long orderNo) {

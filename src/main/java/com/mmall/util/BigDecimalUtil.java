@@ -2,6 +2,7 @@ package com.mmall.util;
 
 import java.math.BigDecimal;
 
+// BigDecimal 工具类
 public class BigDecimalUtil {
     private BigDecimalUtil(){}
     //+

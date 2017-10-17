@@ -28,6 +28,7 @@ public class OrderManagerController {
     @Autowired
     private IUserService iUserService;
 
+    //所有订单
     @RequestMapping("manager_list.do")
     @ResponseBody
     public ServerResponse<PageInfo> managerList(HttpSession session ,
@@ -48,6 +49,7 @@ public class OrderManagerController {
     }
 
 
+    //订单详细
     @RequestMapping("manager_detail.do")
     @ResponseBody
     public ServerResponse<OrderVO> managerDetail(HttpSession session, Long orderNo)
@@ -65,7 +67,7 @@ public class OrderManagerController {
         }
     }
 
-
+    //查询订单
     @RequestMapping("manager_search.do")
     @ResponseBody
     public ServerResponse<PageInfo> managerSearch(HttpSession session ,Long orderNo,
@@ -85,7 +87,7 @@ public class OrderManagerController {
         }
     }
 
-
+    //发货
     @RequestMapping("manager_send_goods.do")
     @ResponseBody
     public ServerResponse<String> managerSendGoods(HttpSession session, Long orderNo)

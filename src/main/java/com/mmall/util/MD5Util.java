@@ -23,13 +23,7 @@ public class MD5Util {
         return hexDigits[d1] + hexDigits[d2];
     }
 
-    /**
-     * 返回大写MD5
-     *
-     * @param origin
-     * @param charsetname
-     * @return
-     */
+
     private static String MD5Encode(String origin, String charsetname) {
         String resultString = null;
         try {

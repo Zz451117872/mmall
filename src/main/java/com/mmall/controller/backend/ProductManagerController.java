@@ -41,6 +41,7 @@ public class ProductManagerController {
     @Autowired
     private IFileService iFileService;
 
+    //保存产品
     @RequestMapping("manager_save_product.do")
     @ResponseBody
     public ServerResponse<String> managerSaveProduct(HttpSession session, Product product)
@@ -59,6 +60,7 @@ public class ProductManagerController {
         }
     }
 
+    //修改产品
     @RequestMapping("manager_set_sale_status.do")
     @ResponseBody
     public ServerResponse<String> managerSetSaleStatus(HttpSession session,Integer productId,Integer status)
@@ -77,6 +79,7 @@ public class ProductManagerController {
         }
     }
 
+    //拉取产品 信息
     @RequestMapping("manager_detail.do")
     @ResponseBody
     public ServerResponse<ProductVO> managerDetail(HttpSession session, Integer productId)
@@ -95,6 +98,7 @@ public class ProductManagerController {
         }
     }
 
+    //所有产品
     @RequestMapping("manager_list.do")
     @ResponseBody
     public ServerResponse<PageInfo> managerList(HttpSession session, @RequestParam(value="pageNum",defaultValue = "1") int pageNum, @RequestParam(value="pageSize",defaultValue = "10") int pageSize)
@@ -113,6 +117,7 @@ public class ProductManagerController {
         }
     }
 
+    //查找产品，通过产品名称或者产品id
     @RequestMapping("manager_search_product.do")
     @ResponseBody
     public ServerResponse<PageInfo> managerSearchProduct(HttpSession session
@@ -135,6 +140,7 @@ public class ProductManagerController {
         }
     }
 
+    //测试方法
     @RequestMapping("auto_upload.do")
     @ResponseBody
     public ServerResponse<String> autoUpload(HttpSession session,HttpServletRequest request)
@@ -153,6 +159,7 @@ public class ProductManagerController {
         }
     }
 
+    //上传文件
     @RequestMapping("upload.do")
     @ResponseBody
     public ServerResponse<Map<String,String>> upload(HttpSession session,MultipartFile file, HttpServletRequest request)
@@ -181,6 +188,7 @@ public class ProductManagerController {
         }
     }
 
+    //上传富文本
     @RequestMapping("richtextUpload.do")
     @ResponseBody
     public Map richtextUpload(HttpSession session, @RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request, HttpServletResponse response)

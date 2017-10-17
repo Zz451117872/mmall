@@ -23,6 +23,7 @@ public class CartController {
     @Autowired
     private ICartService iCartService;
 
+    //添加购物条目
     @RequestMapping("add.do")
     @ResponseBody
     public ServerResponse<CartVO> add(HttpSession session , Integer count, Integer productId)
@@ -36,7 +37,7 @@ public class CartController {
     }
 
 
-
+    //
     @RequestMapping("update.do")
     @ResponseBody
     public ServerResponse<CartVO> update(HttpSession session , Integer count, Integer productId)
@@ -49,6 +50,7 @@ public class CartController {
         return iCartService.update(user.getId(),count,productId);
     }
 
+    //更新购物 数量
     @RequestMapping("update_quantity.do")
     @ResponseBody
     public ServerResponse<Integer> updateQuantity(HttpSession session , Integer count, Integer cartId)
@@ -61,6 +63,7 @@ public class CartController {
         return iCartService.updateQuantiry(user.getId(),count,cartId);
     }
 
+    //删除购物条目
     @RequestMapping("delete.do")
     @ResponseBody
     public ServerResponse<CartVO> delete(HttpSession session ,String productIdS)
@@ -73,6 +76,7 @@ public class CartController {
         return iCartService.delete(user.getId(),productIdS);
     }
 
+    //删除购物 条目
     @RequestMapping("delete_by_cartids.do")
     @ResponseBody
     public ServerResponse<CartVO> deleteByCartIds(HttpSession session ,String cartIds)
@@ -85,6 +89,7 @@ public class CartController {
         return iCartService.deleteByCartids(user.getId(),cartIds);
     }
 
+    //所有购物条目
     @RequestMapping("list.do")
     @ResponseBody
     public ServerResponse<CartVO> list(HttpSession session)
@@ -97,6 +102,7 @@ public class CartController {
         return iCartService.list(user.getId());
     }
 
+    //选择所有条目
     @RequestMapping("selectAll.do")
     @ResponseBody
     public ServerResponse<CartVO> selectAll(HttpSession session)
@@ -109,6 +115,7 @@ public class CartController {
         return iCartService.selectOrUnselect(user.getId(),Const.Cart.CHECKED,null);
     }
 
+    //反选所有
     @RequestMapping("unSelectAll.do")
     @ResponseBody
     public ServerResponse<CartVO> unSelectAll(HttpSession session)
@@ -121,6 +128,7 @@ public class CartController {
         return iCartService.selectOrUnselect(user.getId(),Const.Cart.UNCHECKED,null);
     }
 
+    //反选
     @RequestMapping("unSelect.do")
     @ResponseBody
     public ServerResponse<CartVO> unSelect(HttpSession session,Integer productId)
@@ -133,6 +141,7 @@ public class CartController {
         return iCartService.selectOrUnselect(user.getId(),Const.Cart.UNCHECKED,productId);
     }
 
+    //选择
     @RequestMapping("select.do")
     @ResponseBody
     public ServerResponse<CartVO> Select(HttpSession session,Integer productId)
