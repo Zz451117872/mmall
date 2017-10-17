@@ -22,10 +22,10 @@
     <!-- <value>192.168.126.129</value>-->
             <value>47.93.207.81</value>
         </constructor-arg>
- <constructor-arg type="int">
+        <constructor-arg type="int">
      <value>6379</value>
- </constructor-arg>
-</bean>
+    </constructor-arg>
+    </bean>
 
 <bean id="gson" class="com.google.gson.Gson"></bean>
 

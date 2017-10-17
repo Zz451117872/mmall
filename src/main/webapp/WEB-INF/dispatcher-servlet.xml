@@ -13,7 +13,6 @@
     </context:component-scan>
 
 
-
     <mvc:annotation-driven>
         <mvc:message-converters>
             <bean class="org.springframework.http.converter.StringHttpMessageConverter">
