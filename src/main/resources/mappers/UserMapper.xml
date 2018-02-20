@@ -11,13 +11,14 @@
       <arg column="question" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="answer" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="role" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, username, password, email, phone, question, answer, role, create_time, update_time
+    id, username, password, email, phone, question, answer, role,status, create_time, update_time
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -35,11 +36,12 @@
   <insert id="insert" parameterType="com.mmall.pojo.User" >
     insert into mmall_user (id, username, password, 
       email, phone, question, 
-      answer, role, create_time, 
+      answer, role, status, create_time,
       update_time)
     values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{question,jdbcType=VARCHAR}, 
-      #{answer,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, now(),
+      #{answer,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER},#{status,jdbcType=INTEGER},
+       now(),
       now())
   </insert>
 
@@ -70,12 +72,11 @@
       <if test="role != null" >
         role,
       </if>
-      <if test="createTime != null" >
+      <if test="status != null" >
+        status,
+      </if>
         create_time,
-      </if>
-      <if test="updateTime != null" >
         update_time,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -102,12 +103,11 @@
       <if test="role != null" >
         #{role,jdbcType=INTEGER},
       </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
       </if>
-      <if test="updateTime != null" >
+       now(),
         now(),
-      </if>
     </trim>
   </insert>
 
@@ -133,14 +133,14 @@
         answer = #{answer,jdbcType=VARCHAR},
       </if>
       <if test="role != null" >
-        role = #{role,jdbcType=INTEGER},
+      role = #{role,jdbcType=INTEGER},
+    </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      /*
-      <if test="updateTime != null" > </if>
-      */
       update_time =now(),
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -155,6 +155,7 @@
       question = #{question,jdbcType=VARCHAR},
       answer = #{answer,jdbcType=VARCHAR},
       role = #{role,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
@@ -215,5 +216,37 @@
     from mmall_user
     where email =#{email}
     and id != #{userId}
+  </select>
+
+  <select id="getUserByUsernameOrRole" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from mmall_user
+    <where>
+      <if test="username != null">
+        and username like #{username}
+      </if>
+      <if test="userRole != null">
+        and role = #{userRole}
+      </if>
+    </where>
+  </select>
+  
+  <select id="getByUsername" parameterType="string" resultMap="BaseResultMap">
+    SELECT 
+    <include refid="Base_Column_List"/>
+    from mmall_user
+    where username = #{username}
+  </select>
+  
+  <select id="selectByCondition" parameterType="map" resultMap="BaseResultMap">
+    SELECT 
+    <include refid="Base_Column_List"/>
+    from mmall_user
+    <where>
+      <if test="name != null">
+        and ${name} = #{value}
+      </if>
+    </where>
   </select>
 </mapper>

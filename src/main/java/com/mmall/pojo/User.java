@@ -1,21 +1,28 @@
 package com.mmall.pojo;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class User implements Serializable{
     private Integer id;
 
+    @NotEmpty
     private String username;
 
     private String password;
 
+    @NotEmpty
     private String email;
 
+    @NotEmpty
     private String phone;
 
+    @NotEmpty
     private String question;
 
+    @NotEmpty
     private String answer;
 
     private Integer role;
@@ -24,8 +31,11 @@ public class User implements Serializable{
 
     private Date updateTime;
 
-    public User(Integer id, String username, String password, String email, String phone, String question, String answer, Integer role, Date createTime, Date updateTime) {
+    private Integer status;
+
+    public User(Integer id, String username, String password, String email, String phone, String question, String answer, Integer role,Integer status, Date createTime, Date updateTime) {
         this.id = id;
+        this.status = status;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -35,6 +45,14 @@ public class User implements Serializable{
         this.role = role;
         this.createTime = createTime;
         this.updateTime = updateTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public User() {

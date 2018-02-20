@@ -54,10 +54,9 @@ public class SolrServiceImpl implements ISolrService {
                 product.setName((String)solrDocument.get("name"));
                 product.setSubtitle((String)solrDocument.get("subtitle"));
                 product.setMainImage((String)solrDocument.get("main_image"));
-                product.setPrice(new BigDecimal(solrDocument.get("price").toString()));
+                product.setPrice(Double.parseDouble((String)solrDocument.get("price")));
                 product.setStock(Integer.parseInt(solrDocument.get("stock").toString()));
                 product.setStatus(Integer.parseInt(solrDocument.get("status").toString()));
-                product.setImageHost("http://img.immoc.com/");
                 productList.add(product);
             }
         } catch (Exception e) {

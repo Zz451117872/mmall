@@ -39,4 +39,8 @@ public class DateTimeUtil {
         DateTime dateTime = new DateTime(date);
         return dateTime.toString(STANDARD_FORMAT);
     }
+
+    public static long dateDiff(Date subtractor ,Date minuend  ) {
+        return subtractor.getTime() - minuend.getTime();
+    }
 }

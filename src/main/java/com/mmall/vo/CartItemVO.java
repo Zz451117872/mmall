@@ -1,23 +1,25 @@
 package com.mmall.vo;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * Created by aa on 2017/6/23.
  */
-public class CartProductVO {
+public class CartItemVO implements Serializable{
+
     private Integer id;
     private Integer userId;
     private Integer productId;
     private Integer quantity;
     private String productName;
     private String productSubtitle;
+    private String createTime;
     private String productMainImage;
-    private BigDecimal productPrice;
-    private Integer productStatus;
-    private BigDecimal productTotalPrice;
+    private Double productPrice;
+    private String productStatus;
+    private Double productTotalPrice;
     private Integer productStock;
-    private Integer productChecked;
     private String limitQuantity;
 
     public Integer getId() {
@@ -26,6 +28,14 @@ public class CartProductVO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
     public Integer getUserId() {
@@ -76,27 +86,27 @@ public class CartProductVO {
         this.productMainImage = productMainImage;
     }
 
-    public BigDecimal getProductPrice() {
+    public Double getProductPrice() {
         return productPrice;
     }
 
-    public void setProductPrice(BigDecimal productPrice) {
+    public void setProductPrice(Double productPrice) {
         this.productPrice = productPrice;
     }
 
-    public Integer getProductStatus() {
+    public String getProductStatus() {
         return productStatus;
     }
 
-    public void setProductStatus(Integer productStatus) {
+    public void setProductStatus(String productStatus) {
         this.productStatus = productStatus;
     }
 
-    public BigDecimal getProductTotalPrice() {
+    public Double getProductTotalPrice() {
         return productTotalPrice;
     }
 
-    public void setProductTotalPrice(BigDecimal productTotalPrice) {
+    public void setProductTotalPrice(Double productTotalPrice) {
         this.productTotalPrice = productTotalPrice;
     }
 
@@ -106,14 +116,6 @@ public class CartProductVO {
 
     public void setProductStock(Integer productStock) {
         this.productStock = productStock;
-    }
-
-    public Integer getProductChecked() {
-        return productChecked;
-    }
-
-    public void setProductChecked(Integer productChecked) {
-        this.productChecked = productChecked;
     }
 
     public String getLimitQuantity() {

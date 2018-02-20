@@ -1,25 +1,35 @@
 package com.mmall.pojo;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class Product {
     private Integer id;
 
+    @NotNull
     private Integer categoryId;
 
+    @NotNull
     private String name;
 
+    @NotEmpty
     private String subtitle;
 
+    @NotEmpty
     private String mainImage;
 
     private String subImages;
 
+    @NotEmpty
     private String detail;
 
+    @NotNull
     private BigDecimal price;
 
+    @NotNull
     private Integer stock;
 
     private Integer status;
@@ -27,6 +37,24 @@ public class Product {
     private Date createTime;
 
     private Date updateTime;
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", categoryId=" + categoryId +
+                ", name='" + name + '\'' +
+                ", subtitle='" + subtitle + '\'' +
+                ", mainImage='" + mainImage + '\'' +
+                ", subImages='" + subImages + '\'' +
+                ", detail='" + detail + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                ", status=" + status +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
 
     public Product(Integer id, Integer categoryId, String name, String subtitle, String mainImage, String subImages, String detail, BigDecimal price, Integer stock, Integer status, Date createTime, Date updateTime) {
         this.id = id;

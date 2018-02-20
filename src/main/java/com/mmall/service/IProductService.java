@@ -12,13 +12,10 @@ import java.util.List;
  */
 public interface IProductService {
     ServerResponse<String> saveOrUpdateProduct(Product product);
-    ServerResponse<String> setSaleStatus(Integer productId,Integer status);
-    ServerResponse<ProductVO> managerProductDetail(Integer productId);
-    ServerResponse<PageInfo> getProductList(Integer pageNum, Integer pageSize);
-    ServerResponse<PageInfo> searchProduct(String productName,Integer productId,Integer pageNum,Integer pageSize);
+    ServerResponse<ProductVO> getProductsByNameOrId(String productName,Integer productId);
     ServerResponse<ProductVO> getProductDetail(Integer productId);
-    ServerResponse<PageInfo> getProductByKeywordAndCategoryId(String keyword,Integer categoryId,int pageNum,int pageSize,String orderBy);
+    ServerResponse<PageInfo> getProductByKeywordOrCategory(String keyword,Integer categoryId,Integer pageNum,Integer pageSize,String orderBy);
     PageInfo getProductListToSolr(Integer pageNum,Integer pageSize);
-    ServerResponse<String> autoUpload(String path);
 
+    ServerResponse soldOutOrPutaway(Integer productId);
 }

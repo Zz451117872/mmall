@@ -8,18 +8,18 @@ import java.math.BigDecimal;
 public class ProductVO {
     private Integer id;
     private Integer categoryId;
+    private String categoryName;
     private String name;
     private String subtitle;
     private String mainImage;
     private String subImages;
     private String detail;
-    private BigDecimal price;
+    private Double price;
     private Integer stock;
     private Integer status;
+    private String statusDesc;
     private String createTime;
     private String updateTime;
-    private String imageHost;
-    private Integer parentCategoryId;
 
     public Integer getId() {
         return id;
@@ -77,11 +77,11 @@ public class ProductVO {
         this.detail = detail;
     }
 
-    public BigDecimal getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -117,19 +117,19 @@ public class ProductVO {
         this.updateTime = updateTime;
     }
 
-    public String getImageHost() {
-        return imageHost;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setImageHost(String imageHost) {
-        this.imageHost = imageHost;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
-    public Integer getParentCategoryId() {
-        return parentCategoryId;
+    public String getStatusDesc() {
+        return statusDesc;
     }
 
-    public void setParentCategoryId(Integer parentCategoryId) {
-        this.parentCategoryId = parentCategoryId;
+    public void setStatusDesc(String statusDesc) {
+        this.statusDesc = statusDesc;
     }
 }

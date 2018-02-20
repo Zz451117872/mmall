@@ -28,20 +28,26 @@ public class ProductController {
     @ResponseBody
     public ServerResponse<ProductVO> detail(Integer productId)
     {
-        return iProductService.getProductDetail(productId);
+        if(productId != null) {
+            return iProductService.getProductDetail(productId);
+        }
+        return ServerResponse.createByErrorMessage("参数错误");
     }
 
     //所有产品
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse<PageInfo> list(@RequestParam(value = "keyword",required = false) String keyword,
+    public ServerResponse<PageInfo> getProductsByNameOrCategory(
+                                         @RequestParam(value = "keyword",required = false) String keyword,
                                          @RequestParam(value = "categoryId",required = false)Integer categoryId,
-                                         @RequestParam(value = "pageNum",defaultValue = "1")int pageNum,
-                                         @RequestParam(value = "pageSize",defaultValue = "10")int pageSize,
-                                         @RequestParam(value = "orderBy",defaultValue = "")String orderBy)
+                                         @RequestParam(value = "pageNum", required = false,defaultValue = "1")int pageNum,
+                                         @RequestParam(value = "pageSize",required = false,defaultValue = "10")int pageSize,
+                                         @RequestParam(value = "orderBy",required = false,defaultValue = "")String orderBy)
     {
-
-        return iProductService.getProductByKeywordAndCategoryId(keyword,categoryId,pageNum,pageSize,orderBy);
+        if(keyword == null && categoryId == null) {
+            return ServerResponse.createByErrorMessage("参数错误");
+        }
+        return iProductService.getProductByKeywordOrCategory(keyword, categoryId, pageNum, pageSize, orderBy);
     }
 
 

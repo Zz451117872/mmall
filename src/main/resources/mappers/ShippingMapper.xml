@@ -81,12 +81,8 @@
       <if test="receiverZip != null" >
         receiver_zip,
       </if>
-      <if test="createTime != null" >
         create_time,
-      </if>
-      <if test="updateTime != null" >
         update_time,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -119,12 +115,8 @@
       <if test="receiverZip != null" >
         #{receiverZip,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null" >
         now(),
-      </if>
+        now(),
     </trim>
   </insert>
 

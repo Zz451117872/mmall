@@ -1,11 +1,14 @@
 package com.mmall.controller.protal;
 
+import com.mmall.common.Const;
 import com.mmall.common.ServerResponse;
+import com.mmall.pojo.User;
 import com.mmall.service.ICategoryService;
 import com.mmall.vo.CategoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -20,11 +23,11 @@ public class CategoryController {
     @Autowired
     private ICategoryService iCategoryService;
 
-    //得到 所有分类
-    @RequestMapping("get_home_page_data.do")
+    //获取所有 顶层分类，并要包含子分类
+    @RequestMapping(value = "client_get_top_category.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<List<CategoryVO>> getHomePageData()
+    public ServerResponse getTopCategory()
     {
-       return iCategoryService.getHomePageData();
+        return iCategoryService.getCategoryByParent(null,true,null,null);
     }
 }

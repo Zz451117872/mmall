@@ -15,6 +15,7 @@ import com.mmall.pojo.PayInfo;
 import com.mmall.pojo.User;
 import com.mmall.service.IOrderService;
 import com.mmall.util.DateTimeUtil;
+import com.mmall.vo.CartVO;
 import com.mmall.vo.OrderVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,21 +45,21 @@ public class OrderController {
     @Autowired
     private OrderMapper orderMapper;
 
-    //创建订单
-    @RequestMapping("create.do")
+    //生成订单
+    @RequestMapping("create_order.do")
     @ResponseBody
-    public ServerResponse create(HttpSession session, Integer shippingId )
+    public ServerResponse<Long> createOrder(HttpSession session, Integer shippingId , String cartIds)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iOrderService.createOrder(user.getId(),shippingId);
+        return iOrderService.createOrder(user.getId(),shippingId,cartIds);
     }
 
     //取消订单
-    @RequestMapping("cancel.do")
+    @RequestMapping("cancel_order.do")
     @ResponseBody
     public ServerResponse<OrderVO> cancel(HttpSession session, Long orderNo )
     {
@@ -67,24 +68,24 @@ public class OrderController {
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iOrderService.cancel(user.getId(),orderNo);
+        return iOrderService.cancel(false,user.getId(),orderNo);
     }
 
-    //
-    @RequestMapping("getCartOrderProduct.do")
+    //验证收货
+    @RequestMapping("verify_accepted.do")
     @ResponseBody
-    public ServerResponse<OrderVO> getCartOrderProduct(HttpSession session )
+    public ServerResponse verifyAccepted(HttpSession session, Long orderNo )
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iOrderService.getCartOrderProduct(user.getId());
+        return iOrderService.verifyAccepted(user.getId(),orderNo);
     }
 
     //订单详细
-    @RequestMapping("detail.do")
+    @RequestMapping("order_detail.do")
     @ResponseBody
     public ServerResponse<OrderVO> detail(HttpSession session ,Long orderNo)
     {
@@ -93,22 +94,23 @@ public class OrderController {
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iOrderService.detail(user.getId(),orderNo);
+        return iOrderService.getOrderDetail(user.getId(),orderNo);
     }
 
     //所有订单
-    @RequestMapping("list.do")
+    @RequestMapping("my_order_list.do")
     @ResponseBody
-    public ServerResponse<PageInfo> list(HttpSession session ,
-                                         @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
-                                         @RequestParam(value = "pageSize",defaultValue = "10") int pageSize)
+    public ServerResponse<PageInfo> myOrderList(HttpSession session ,
+                                         @RequestParam(value = "status",required = false,defaultValue = "0")Integer status,
+                                         @RequestParam(value = "pageNum",required = false,defaultValue = "1") Integer pageNum,
+                                         @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iOrderService.getOrderList(user.getId(),pageNum,pageSize);
+        return iOrderService.myOrderList(user.getId(),status,pageNum,pageSize);
     }
 
     //支付
@@ -125,6 +127,17 @@ public class OrderController {
         return iOrderService.pay(orderNo,user.getId(),path);
     }
 
+    @RequestMapping("isPayed.do")
+    @ResponseBody
+    public ServerResponse isPayed(HttpSession session,Long orderNo)
+    {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null)
+        {
+            return ServerResponse.createByError();
+        }
+        return iOrderService.isPayed(user.getId(),orderNo);
+    }
     //支付宝回调
     @RequestMapping("alipay_callback.do")
     @ResponseBody
@@ -168,35 +181,4 @@ public class OrderController {
         }
         return Const.AlipayCallable.RESPONSE_FAILED;
     }
-
-
-    //检查支付状态
-    @RequestMapping("query_order_pay_status.do")
-    @ResponseBody
-    public ServerResponse<Boolean> queryOrderPayStatus(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return ServerResponse.createByError();
-        }
-        ServerResponse serverResponse = iOrderService.queryOrderPayStatus(user.getId(), orderNo);
-        if (serverResponse.isSuccess()) {
-            return ServerResponse.createBySuccess(true);
-        }
-        return ServerResponse.createBySuccess(false);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

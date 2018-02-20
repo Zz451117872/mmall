@@ -7,6 +7,7 @@ import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IOrderService;
 import com.mmall.service.IUserService;
+import com.mmall.service.impl.UserServiceImpl;
 import com.mmall.vo.OrderVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 
 /**
  * Created by aa on 2017/6/24.
  */
 @Controller
-@RequestMapping("/managerorder/")
+@RequestMapping("/manager_order/")
 public class OrderManagerController {
 
     @Autowired
@@ -29,11 +31,16 @@ public class OrderManagerController {
     private IUserService iUserService;
 
     //所有订单
-    @RequestMapping("manager_list.do")
+    @RequestMapping("get_order_by_multi_condition.do")
     @ResponseBody
-    public ServerResponse<PageInfo> managerList(HttpSession session ,
-                                         @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
-                                         @RequestParam(value = "pageSize",defaultValue = "10") int pageSize)
+    public ServerResponse<PageInfo> getOrderByMultiCondition(HttpSession session ,
+                                                          @RequestParam(value = "userId",required = false)   Integer userId,
+                                                          @RequestParam(value = "username",required = false)   String username,
+                                                          @RequestParam(value = "orderStatus",required = false)   Integer orderStatus,
+                                                          @RequestParam(value = "createTime",required = false)    Integer createTime,
+                                                          @RequestParam(value = "pageNum",required = false,defaultValue = "1")   Integer pageNum,
+                                                          @RequestParam(value = "pageSize",required = false,defaultValue = "10")   Integer pageSize
+        )
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
@@ -42,7 +49,7 @@ public class OrderManagerController {
         }
         if(iUserService.checkAdminRole(user).isSuccess())
         {//业务逻辑
-            return iOrderService.managerList(pageNum,pageSize);
+            return iOrderService.getOrderByMultiCondition(userId,username,orderStatus,createTime,pageNum,pageSize,null,true);
         }else{
             return ServerResponse.createByErrorMessage("无权限");
         }
@@ -50,9 +57,9 @@ public class OrderManagerController {
 
 
     //订单详细
-    @RequestMapping("manager_detail.do")
+    @RequestMapping("order_detail.do")
     @ResponseBody
-    public ServerResponse<OrderVO> managerDetail(HttpSession session, Long orderNo)
+    public ServerResponse<OrderVO> getOrderDetail(HttpSession session, Long orderNo)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
@@ -61,36 +68,16 @@ public class OrderManagerController {
         }
         if(iUserService.checkAdminRole(user).isSuccess())
         {//业务逻辑
-            return iOrderService.managerDetail(orderNo);
-        }else{
-            return ServerResponse.createByErrorMessage("无权限");
-        }
-    }
-
-    //查询订单
-    @RequestMapping("manager_search.do")
-    @ResponseBody
-    public ServerResponse<PageInfo> managerSearch(HttpSession session ,Long orderNo,
-                                         @RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
-                                         @RequestParam(value = "pageSize",defaultValue = "10") int pageSize)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        if(iUserService.checkAdminRole(user).isSuccess())
-        {//业务逻辑
-            return iOrderService.managerSearch(orderNo,pageNum,pageSize);
+            return iOrderService.getOrderDetail(null,orderNo);
         }else{
             return ServerResponse.createByErrorMessage("无权限");
         }
     }
 
     //发货
-    @RequestMapping("manager_send_goods.do")
+    @RequestMapping("send_goods.do")
     @ResponseBody
-    public ServerResponse<String> managerSendGoods(HttpSession session, Long orderNo)
+    public ServerResponse<String> sendGoods(HttpSession session, Long orderNo)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
@@ -99,7 +86,25 @@ public class OrderManagerController {
         }
         if(iUserService.checkAdminRole(user).isSuccess())
         {//业务逻辑
-            return iOrderService.managerSendGoods(orderNo);
+            return iOrderService.sendGoods(orderNo);
+        }else{
+            return ServerResponse.createByErrorMessage("无权限");
+        }
+    }
+
+    //关闭订单
+    @RequestMapping("close_order.do")
+    @ResponseBody
+    public ServerResponse<String> closeOrder(HttpSession session, Long orderNo)
+    {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null)
+        {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        if(iUserService.checkAdminRole(user).isSuccess())
+        {//业务逻辑
+            return iOrderService.sendGoods(orderNo);
         }else{
             return ServerResponse.createByErrorMessage("无权限");
         }

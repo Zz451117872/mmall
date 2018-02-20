@@ -7,8 +7,10 @@ import java.util.List;
  * Created by aa on 2017/6/24.
  */
 public class OrderVO {
-    private Long orderNo;
-    private BigDecimal payment;
+    private Integer userId;
+    private String username;
+    private Long id;
+    private Double payment;
     private Integer payType;
     private String payTypeDesc;
     private Integer postage;
@@ -21,25 +23,37 @@ public class OrderVO {
     private String createTim;
 
     private List<OrderItemVO> orderItemVOList;
-    private String imageHost;
-    private Integer shippingId;
-    private String receiveName;
-
     private ShippingVO shippingVO;
 
-    public Long getOrderNo() {
-        return orderNo;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setOrderNo(Long orderNo) {
-        this.orderNo = orderNo;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public BigDecimal getPayment() {
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Double getPayment() {
         return payment;
     }
 
-    public void setPayment(BigDecimal payment) {
+    public void setPayment(Double payment) {
         this.payment = payment;
     }
 
@@ -129,30 +143,6 @@ public class OrderVO {
 
     public void setOrderItemVOList(List<OrderItemVO> orderItemVOList) {
         this.orderItemVOList = orderItemVOList;
-    }
-
-    public String getImageHost() {
-        return imageHost;
-    }
-
-    public void setImageHost(String imageHost) {
-        this.imageHost = imageHost;
-    }
-
-    public Integer getShippingId() {
-        return shippingId;
-    }
-
-    public void setShippingId(Integer shippingId) {
-        this.shippingId = shippingId;
-    }
-
-    public String getReceiveName() {
-        return receiveName;
-    }
-
-    public void setReceiveName(String receiveName) {
-        this.receiveName = receiveName;
     }
 
     public ShippingVO getShippingVO() {

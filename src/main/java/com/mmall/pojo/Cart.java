@@ -1,28 +1,29 @@
 package com.mmall.pojo;
 
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 
-public class Cart {
+public class Cart implements Serializable{
     private Integer id;
 
     private Integer userId;
 
+    @NotNull
     private Integer productId;
 
+    @NotNull
     private Integer quantity;
-
-    private Integer checked;
 
     private Date createTime;
 
     private Date updateTime;
 
-    public Cart(Integer id, Integer userId, Integer productId, Integer quantity, Integer checked, Date createTime, Date updateTime) {
+    public Cart(Integer id, Integer userId, Integer productId, Integer quantity, Date createTime, Date updateTime) {
         this.id = id;
         this.userId = userId;
         this.productId = productId;
         this.quantity = quantity;
-        this.checked = checked;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
@@ -63,13 +64,6 @@ public class Cart {
         this.quantity = quantity;
     }
 
-    public Integer getChecked() {
-        return checked;
-    }
-
-    public void setChecked(Integer checked) {
-        this.checked = checked;
-    }
 
     public Date getCreateTime() {
         return createTime;

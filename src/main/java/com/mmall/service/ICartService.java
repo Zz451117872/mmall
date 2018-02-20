@@ -7,14 +7,10 @@ import com.mmall.vo.CartVO;
  * Created by aa on 2017/6/23.
  */
 public interface ICartService {
-
-    ServerResponse<CartVO> add(Integer userId, Integer count, Integer productId);
-    ServerResponse<CartVO> update(Integer userId,Integer count,Integer productId);
-    ServerResponse<CartVO> delete(Integer userId,String productIds);
-    ServerResponse<CartVO> list(Integer userId);
-    ServerResponse<CartVO> selectOrUnselect(Integer userId,Integer checked,Integer productId);
-    ServerResponse<Integer> selectCartProductCount(Integer userId);
-    ServerResponse<Integer> updateQuantiry(Integer userId,Integer count,Integer cartId);
-    ServerResponse<CartVO> deleteByCartids(Integer userId,String cartIds);
+    ServerResponse<CartVO> createPrepareOrder(Integer userId, String cartIds);
+    ServerResponse add(Integer userId, Integer count,Integer productId);
+    ServerResponse<CartVO> myCartList(Integer userId);
+    ServerResponse updateQuantiry(Integer userId,Integer count,Integer cartId);
+    ServerResponse deleteByCartids(Integer userId,String cartIds);
 
 }

@@ -1,12 +1,19 @@
 package com.mmall.pojo;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 
-public class Category {
+public class Category implements Serializable{
+
     private Integer id;
 
+    @NotNull
     private Integer parentId;
 
+    @NotEmpty
     private String name;
 
     private Boolean status;

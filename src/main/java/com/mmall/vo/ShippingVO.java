@@ -4,6 +4,7 @@ package com.mmall.vo;
  * Created by aa on 2017/6/24.
  */
 public class ShippingVO {
+
     private String receiverName;
 
     private String receiverPhone;

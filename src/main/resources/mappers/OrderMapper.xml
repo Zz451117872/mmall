@@ -3,8 +3,7 @@
 <mapper namespace="com.mmall.dao.OrderMapper" >
   <resultMap id="BaseResultMap" type="com.mmall.pojo.Order" >
     <constructor >
-      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="order_no" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="id" jdbcType="BIGINT" javaType="java.lang.Long" />
       <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="shipping_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="payment" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
@@ -21,29 +20,29 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, order_no, user_id, shipping_id, payment, payment_type, postage, status, payment_time, 
+    id, user_id, shipping_id, payment, payment_type, postage, status, payment_time,
     send_time, end_time, close_time, create_time, update_time
   </sql>
 
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
     select 
     <include refid="Base_Column_List" />
     from mmall_order
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <delete id="deleteByPrimaryKey" parameterType="long" >
     delete from mmall_order
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
 
   <insert id="insert" parameterType="com.mmall.pojo.Order" >
-    insert into mmall_order (id, order_no, user_id, 
+    insert into mmall_order (id, user_id,
       shipping_id, payment, payment_type, 
       postage, status, payment_time, 
       send_time, end_time, close_time, 
       create_time, update_time)
-    values (#{id,jdbcType=INTEGER}, #{orderNo,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER},
       #{shippingId,jdbcType=INTEGER}, #{payment,jdbcType=DECIMAL}, #{paymentType,jdbcType=INTEGER}, 
       #{postage,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{paymentTime,jdbcType=TIMESTAMP}, 
       #{sendTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{closeTime,jdbcType=TIMESTAMP}, 
@@ -55,9 +54,6 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
-      </if>
-      <if test="orderNo != null" >
-        order_no,
       </if>
       <if test="userId != null" >
         user_id,
@@ -89,19 +85,12 @@
       <if test="closeTime != null" >
         close_time,
       </if>
-      <if test="createTime != null" >
         create_time,
-      </if>
-      <if test="updateTime != null" >
         update_time,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="orderNo != null" >
-        #{orderNo,jdbcType=BIGINT},
+        #{id,jdbcType=BIGINT},
       </if>
       <if test="userId != null" >
         #{userId,jdbcType=INTEGER},
@@ -133,21 +122,14 @@
       <if test="closeTime != null" >
         #{closeTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="createTime != null" >
         now(),
-      </if>
-      <if test="updateTime != null" >
         now(),
-      </if>
     </trim>
   </insert>
 
   <update id="updateByPrimaryKeySelective" parameterType="com.mmall.pojo.Order" >
     update mmall_order
     <set >
-      <if test="orderNo != null" >
-        order_no = #{orderNo,jdbcType=BIGINT},
-      </if>
       <if test="userId != null" >
         user_id = #{userId,jdbcType=INTEGER},
       </if>
@@ -181,16 +163,14 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
         update_time = now(),
-      </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 
   <update id="updateByPrimaryKey" parameterType="com.mmall.pojo.Order" >
     update mmall_order
-    set order_no = #{orderNo,jdbcType=BIGINT},
+    set
       user_id = #{userId,jdbcType=INTEGER},
       shipping_id = #{shippingId,jdbcType=INTEGER},
       payment = #{payment,jdbcType=DECIMAL},
@@ -203,7 +183,7 @@
       close_time = #{closeTime,jdbcType=TIMESTAMP},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = now()
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   
   <select id="selectByUseridAndOrderno" resultMap="BaseResultMap" parameterType="map">
@@ -211,33 +191,52 @@
     <include refid="Base_Column_List"></include>
     from mmall_order
     where user_id = #{userId}
-    and order_no = #{orderNo}
+    and id = #{orderNo}
   </select>
 
   <select id="selectByOrderno" resultMap="BaseResultMap" parameterType="long">
     SELECT
     <include refid="Base_Column_List"></include>
     from mmall_order
-    where order_no = #{orderNo}
+    where id = #{orderNo}
   </select>
-
-
-
-
-  <select id="selectByUserid" resultMap="BaseResultMap" parameterType="int">
-    SELECT 
-    <include refid="Base_Column_List"></include>
-    from mmall_order
-    where user_id =#{userId}
-    order by create_time desc
-  </select>
-
-
-
+  
   <select id="selectAll" resultMap="BaseResultMap" >
     SELECT 
     <include refid="Base_Column_List"></include>
     from mmall_order
     order by create_time desc;
+  </select>
+  
+  <select id="selectByUseridOrStatus" parameterType="map" resultMap="BaseResultMap">
+    SELECT 
+    <include refid="Base_Column_List"/>
+    from mmall_order
+    <where>
+      <if test="userId != null">
+        and user_id = #{userId}
+      </if>
+      <if test="status != null">
+        and status = #{status}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+
+  <select id="getOrderByMultiCondition" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from mmall_order
+    <where>
+      <if test="userId != null">
+        and user_id = #{userId}
+      </if>
+      <if test="orderStatus != null">
+        and status = #{orderStatus}
+      </if>
+      <if test="createTime != null">
+        create_time > #{createTime}
+      </if>
+    </where>
   </select>
 </mapper>

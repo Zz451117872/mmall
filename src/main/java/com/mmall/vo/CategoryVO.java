@@ -1,42 +1,38 @@
 package com.mmall.vo;
 
-import com.mmall.pojo.Product;
-
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by aa on 2017/7/1.
  */
-public class CategoryVO {
+public class CategoryVO implements Serializable{
+
     private Integer id;
+    private  Integer parentCategory;
+    private String parentCategoryName;
+
     private String name;
-    private List<CategoryVO> childs = null;
-    private List<Product> products = null;
-    private boolean isSun;
 
-    public boolean isSun() {
-        return isSun;
+    private Boolean status;
+    private String statusDesc;
+
+    private Integer sortOrder;
+
+    private String createTime;
+
+    private String updateTime;
+
+    private List<CategoryVO> childs;
+
+    public Integer getParentCategory() {
+        return parentCategory;
     }
 
-    public void setSun(boolean sun) {
-        isSun = sun;
+    public void setParentCategory(Integer parentCategory) {
+        this.parentCategory = parentCategory;
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-
-    public CategoryVO(Integer id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public CategoryVO()
-    {}
     public Integer getId() {
         return id;
     }
@@ -45,12 +41,60 @@ public class CategoryVO {
         this.id = id;
     }
 
+    public String getParentCategoryName() {
+        return parentCategoryName;
+    }
+
+    public void setParentCategoryName(String parentCategoryName) {
+        this.parentCategoryName = parentCategoryName;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public String getStatusDesc() {
+        return statusDesc;
+    }
+
+    public void setStatusDesc(String statusDesc) {
+        this.statusDesc = statusDesc;
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 
     public List<CategoryVO> getChilds() {

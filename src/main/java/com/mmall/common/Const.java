@@ -10,18 +10,18 @@ import java.util.Set;
 public class Const {
     //当前用户
     public static final String CURRENT_USER = "currentUser";
-    public static final String EMAIL = "email";
-    public static final String USERNAME = "username";
+    public static final Integer cartCapacityUpperLimit = 10;
+    public static final Integer shippingCapacityUpperLimit = 6;
+    public static final Integer orderPayTimeoutLimit = 10*60*1000; //分钟
+    public static final String picturePath = "http://localhost:8080/upload/";
 
     //购物条目 在购物车中的状态
     public interface Cart{
-        int CHECKED =1; //选中
-        int UNCHECKED=0;//未选中
         String LIMIT_NUM_FAIL = "LIMIT_NUM_FAIL";
         String LIMIT_NUM_SUCCESS="LIMIT_NUM_SUCCESS";
     }
-    public interface ProductListOrderBy{
-        Set<String > PRICE_ASC_DESC = Sets.newHashSet("price_asc","price_desc");
+    public interface MmallOrderbySet{
+        Set<String > orderbySet = Sets.newHashSet("price:asc","price:desc","create_time&desc","create_time:asc");
     }
 
     //角色
@@ -83,7 +83,7 @@ public class Const {
         CANCELED(1,"已取消"),
         PAID(2,"已付款"),
         SHIPPED(3,"已发货"),
-        SUCCESS(4,"成功"),
+        SUCCESS(4,"已收货"),
         CLOSED(5,"已关闭");
 
         private String value;
@@ -122,7 +122,8 @@ public class Const {
     }
     //产品状态
     public enum ProductStatusEnum{
-        ON_SALE(1,"在线");
+        SOLD_OUT(0,"下架"),
+        ON_SALE(1,"售卖中");
         private String value;
         private int code;
         ProductStatusEnum(int code,String value)
@@ -135,6 +136,118 @@ public class Const {
         }
         public int getCode() {
             return code;
+        }
+
+        public static ProductStatusEnum codeof(int code)
+        {
+            for(ProductStatusEnum productStatusEnum : values())
+            {
+                if(productStatusEnum.getCode() == code)
+                {
+                    return productStatusEnum;
+                }
+            }
+            throw new RuntimeException("没有找到对应的枚举");
+        }
+    }
+
+    public enum UserStatusEnum{
+        NORMAL_USER(0,"正常"),
+        NONACTIVATED_USER(1,"未激活"),
+        FREEZE_USER(3,"已冻结"),
+        INATIVE_USER(4,"不活跃");
+        private String value;
+        private int code;
+        UserStatusEnum(int code,String value)
+        {
+            this.code = code;
+            this.value = value;
+        }
+        public String getValue() {
+            return value;
+        }
+        public int getCode() {
+            return code;
+        }
+
+        public static UserStatusEnum codeof(int code)
+        {
+            for(UserStatusEnum userStatusEnum : values())
+            {
+                if(userStatusEnum.getCode() == code)
+                {
+                    return userStatusEnum;
+                }
+            }
+            throw new RuntimeException("没有找到对应的枚举");
+        }
+    }
+
+    public enum CategoryStatusEnum{
+        USEING(1,"使用中"),
+        DEPRECATED(0,"已弃用");
+        private String value;
+        private int code;
+        CategoryStatusEnum(int code,String value)
+        {
+            this.code = code;
+            this.value = value;
+        }
+        public String getValue() {
+            return value;
+        }
+        public int getCode() {
+            return code;
+        }
+
+        public static CategoryStatusEnum codeof(int code)
+        {
+            for(CategoryStatusEnum categoryStatusEnum : values())
+            {
+                if(categoryStatusEnum.getCode() == code)
+                {
+                    return categoryStatusEnum;
+                }
+            }
+            throw new RuntimeException("没有找到对应的枚举");
+        }
+    }
+
+
+    public enum ErrorEnum{
+        DATA_VERIFY_ERROR(100,"数据校验错误"),
+        DATABASE_ERROR(101,"数据库操作错误"),
+        PARAM_ERROR(102,"参数错误"),
+        UNKNOWN_ERROR(103,"未知错误"),
+        NOT_LOGIN_ERROR(104,"未登录"),
+        PERMISSION_DENIED(105,"拒绝访问"),
+        TARGET_EXISTS_ERROR(106,"拒绝访问"),
+        TARGET_NOT_EXISTS_ERROR(107,"拒绝访问"),
+        ;
+        private String value;
+        private int code;
+        ErrorEnum(int code,String value)
+        {
+            this.code = code;
+            this.value = value;
+        }
+        public String getValue() {
+            return value;
+        }
+        public int getCode() {
+            return code;
+        }
+
+        public static ErrorEnum codeof(int code)
+        {
+            for(ErrorEnum errorEnum : values())
+            {
+                if(errorEnum.getCode() == code)
+                {
+                    return errorEnum;
+                }
+            }
+            throw new RuntimeException("没有找到对应的枚举");
         }
     }
 }

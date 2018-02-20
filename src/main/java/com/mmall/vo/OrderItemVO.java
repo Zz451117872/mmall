@@ -7,14 +7,24 @@ import java.util.Date;
  * Created by aa on 2017/6/24.
  */
 public class OrderItemVO {
+
+    private Integer id;
     private Long orderNo;
     private Integer productId;
     private String productName;
     private String productImage;
-    private BigDecimal currentUnitPrice;
+    private Double currentUnitPrice;
     private Integer quantity;
-    private BigDecimal totalPrice;
+    private Double totalPrice;
     private String createTime;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Long getOrderNo() {
         return orderNo;
@@ -48,11 +58,11 @@ public class OrderItemVO {
         this.productImage = productImage;
     }
 
-    public BigDecimal getCurrentUnitPrice() {
+    public Double getCurrentUnitPrice() {
         return currentUnitPrice;
     }
 
-    public void setCurrentUnitPrice(BigDecimal currentUnitPrice) {
+    public void setCurrentUnitPrice(Double currentUnitPrice) {
         this.currentUnitPrice = currentUnitPrice;
     }
 
@@ -64,11 +74,11 @@ public class OrderItemVO {
         this.quantity = quantity;
     }
 
-    public BigDecimal getTotalPrice() {
+    public Double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(BigDecimal totalPrice) {
+    public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
     }
 

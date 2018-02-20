@@ -3,15 +3,19 @@ package com.mmall.controller.protal;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
+import com.mmall.pojo.Cart;
 import com.mmall.pojo.User;
 import com.mmall.service.ICartService;
 import com.mmall.vo.CartVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 /**
  * Created by aa on 2017/6/23.
@@ -24,146 +28,81 @@ public class CartController {
     private ICartService iCartService;
 
     //添加购物条目
-    @RequestMapping("add.do")
+    @RequestMapping("add_cart.do")
     @ResponseBody
-    public ServerResponse<CartVO> add(HttpSession session , Integer count, Integer productId)
+    public ServerResponse addCart(HttpSession session , @Valid Cart cart , BindingResult bindingResult)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.add(user.getId(),count,productId);
-    }
-
-
-    //
-    @RequestMapping("update.do")
-    @ResponseBody
-    public ServerResponse<CartVO> update(HttpSession session , Integer count, Integer productId)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
+        if(bindingResult.hasErrors())
         {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+            return ServerResponse.createByErrorMessage(bindingResult.getFieldError().getDefaultMessage());
         }
-        return iCartService.update(user.getId(),count,productId);
+        return iCartService.add(user.getId(), cart.getQuantity(),cart.getProductId());
     }
+
 
     //更新购物 数量
     @RequestMapping("update_quantity.do")
     @ResponseBody
-    public ServerResponse<Integer> updateQuantity(HttpSession session , Integer count, Integer cartId)
+    public ServerResponse updateQuantity(HttpSession session ,Integer quantity,Integer cartId)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.updateQuantiry(user.getId(),count,cartId);
-    }
-
-    //删除购物条目
-    @RequestMapping("delete.do")
-    @ResponseBody
-    public ServerResponse<CartVO> delete(HttpSession session ,String productIdS)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        if(cartId != null && quantity != null) {
+            return iCartService.updateQuantiry(user.getId(), quantity, cartId);
         }
-        return iCartService.delete(user.getId(),productIdS);
+        return ServerResponse.createByErrorMessage("参数错误");
     }
 
     //删除购物 条目
     @RequestMapping("delete_by_cartids.do")
     @ResponseBody
-    public ServerResponse<CartVO> deleteByCartIds(HttpSession session ,String cartIds)
+    public ServerResponse deleteByCartIds(HttpSession session , String cartIds)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.deleteByCartids(user.getId(),cartIds);
+        if(cartIds != null && !"".equals(cartIds)) {
+            return iCartService.deleteByCartids(user.getId(), cartIds);
+        }
+        return ServerResponse.createByErrorMessage("参数错误");
     }
 
-    //所有购物条目
-    @RequestMapping("list.do")
+    //我的购物车
+    @RequestMapping("my_cart_list.do")
     @ResponseBody
-    public ServerResponse<CartVO> list(HttpSession session)
+    public ServerResponse<CartVO> myCartList(HttpSession session)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.list(user.getId());
+        return iCartService.myCartList(user.getId());
     }
 
-    //选择所有条目
-    @RequestMapping("selectAll.do")
+    //获取预订单
+    @RequestMapping("prepare_order.do")
     @ResponseBody
-    public ServerResponse<CartVO> selectAll(HttpSession session)
+    public ServerResponse<CartVO> createPrepareOrder(HttpSession session, String cartIds)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.selectOrUnselect(user.getId(),Const.Cart.CHECKED,null);
-    }
-
-    //反选所有
-    @RequestMapping("unSelectAll.do")
-    @ResponseBody
-    public ServerResponse<CartVO> unSelectAll(HttpSession session)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        if(cartIds != null && !"".equals(cartIds)) {
+            return iCartService.createPrepareOrder(user.getId(), cartIds);
         }
-        return iCartService.selectOrUnselect(user.getId(),Const.Cart.UNCHECKED,null);
-    }
-
-    //反选
-    @RequestMapping("unSelect.do")
-    @ResponseBody
-    public ServerResponse<CartVO> unSelect(HttpSession session,Integer productId)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        return iCartService.selectOrUnselect(user.getId(),Const.Cart.UNCHECKED,productId);
-    }
-
-    //选择
-    @RequestMapping("select.do")
-    @ResponseBody
-    public ServerResponse<CartVO> Select(HttpSession session,Integer productId)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        return iCartService.selectOrUnselect(user.getId(),Const.Cart.CHECKED,productId);
-    }
-
-
-    @RequestMapping("getCartProductCount.do")
-    @ResponseBody
-    public ServerResponse<Integer> getCartProductCount(HttpSession session)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createBySuccess(0);
-        }
-        return iCartService.selectCartProductCount(user.getId());
+        return ServerResponse.createByErrorMessage("参数错误");
     }
 }

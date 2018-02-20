@@ -7,10 +7,14 @@ import com.mmall.pojo.Category;
 import com.mmall.pojo.User;
 import com.mmall.service.ICategoryService;
 import com.mmall.service.IUserService;
+import com.mmall.service.impl.UserServiceImpl;
 import com.mmall.vo.CategoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -21,7 +25,7 @@ import java.util.List;
  * Created by aa on 2017/6/21.
  */
 @Controller
-@RequestMapping("/managercategory/")
+@RequestMapping("/manager_category/")
 public class CategoryManagerController {
 
     @Autowired
@@ -30,10 +34,35 @@ public class CategoryManagerController {
     @Autowired
     private ICategoryService iCategoryService;
 
-    //创建分类
-    @RequestMapping("add_category.do")
+    //创建 或者 更新 分类
+    @RequestMapping(value = "save_or_update_category.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> addCategory(HttpSession session,String categoryName,@RequestParam(value = "parentId",defaultValue = "0") int parentId)
+    public ServerResponse saveOrUpdateCategory(HttpSession session, @Validated Category category,BindingResult bindingResult)
+    {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null)
+        {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"未登录");
+        }
+
+        if(bindingResult.hasErrors())
+        {
+            return ServerResponse.createByErrorMessage(bindingResult.getFieldError().getDefaultMessage());
+        }
+        if(iUserService.checkAdminRole(user).isSuccess())
+        {
+           if(category != null)
+           {
+               return iCategoryService.saveOrUpdateCategory(category);
+           }
+            return ServerResponse.createByErrorMessage("参数错误");
+        }
+        return ServerResponse.createByErrorMessage("没有权限");
+    }
+
+    @RequestMapping(value = "delete_category.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse deleteCategory(HttpSession session,Integer categoryId)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
@@ -42,15 +71,17 @@ public class CategoryManagerController {
         }
         if(iUserService.checkAdminRole(user).isSuccess())
         {
-            return iCategoryService.addCategory(categoryName,parentId);
+            if(categoryId != null) {
+                return iCategoryService.deleteCategory(categoryId);
+            }
+            return ServerResponse.createByErrorMessage("参数错误");
         }
-        return ServerResponse.createByErrorMessage("增加分类出错");
+        return ServerResponse.createByErrorMessage("没有权限");
     }
 
-    //修改分类
-    @RequestMapping("set_category_name.do")
+    @RequestMapping(value = "get_category_by_id.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> setCategoryName(HttpSession session,Integer categoryId,String categoryName)
+    public ServerResponse getCategory(HttpSession session,Integer categoryId)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
@@ -59,15 +90,21 @@ public class CategoryManagerController {
         }
         if(iUserService.checkAdminRole(user).isSuccess())
         {
-            return iCategoryService.setCategoryName(categoryId,categoryName);
+            if(categoryId != null) {
+                return iCategoryService.getCategoryById(categoryId);
+            }
+            return ServerResponse.createByErrorMessage("参数错误");
         }
-        return ServerResponse.createByErrorMessage("设置分类名称出错");
+        return ServerResponse.createByErrorMessage("没有权限");
     }
 
-    //得到下一级子分类
-    @RequestMapping("get_category_child.do")
+    @RequestMapping(value = "get_category.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse getCategoryChildByParentId(HttpSession session,Integer categoryId)
+    public ServerResponse getCategory(HttpSession session,
+                                      Integer categoryId,
+                                      Boolean isFillChild,
+                                      Integer pageNum,
+                                      Integer pageSize)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
@@ -76,43 +113,9 @@ public class CategoryManagerController {
         }
         if(iUserService.checkAdminRole(user).isSuccess())
         {
-            return iCategoryService.getChildParallelCategory(categoryId);
-        }
-        return ServerResponse.createByErrorMessage("设置分类名称出错");
-    }
+                return iCategoryService.getCategoryByParent(categoryId, isFillChild,pageNum,pageSize);
 
-    //得到所有子孙分类
-    @RequestMapping("get_category_deep_child.do")
-    @ResponseBody
-    public ServerResponse getCategoryDeepChildByParentId(HttpSession session,Integer categoryId)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"未登录");
         }
-        if(iUserService.checkAdminRole(user).isSuccess())
-        {
-            return iCategoryService.selectCategoryAndChildByParentId(categoryId);
-        }
-        return ServerResponse.createByErrorMessage("设置分类名称出错");
+        return ServerResponse.createByErrorMessage("没有权限");
     }
-
-    //得到所有底层分类
-    @RequestMapping("get_all_bottom_category.do")
-    @ResponseBody
-    public ServerResponse<List<Category>> getAllBottomCategory(HttpSession session)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"未登录");
-        }
-        if(iUserService.checkAdminRole(user).isSuccess())
-        {
-           return iCategoryService.getAllBottomCategory();
-        }
-        return ServerResponse.createByErrorMessage("设置分类名称出错");
-    }
-
 }

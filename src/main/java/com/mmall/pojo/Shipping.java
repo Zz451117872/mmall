@@ -1,5 +1,8 @@
 package com.mmall.pojo;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class Shipping {
@@ -7,20 +10,28 @@ public class Shipping {
 
     private Integer userId;
 
+    @NotEmpty
     private String receiverName;
 
+    @NotEmpty
     private String receiverPhone;
 
+    @NotEmpty
     private String receiverMobile;
 
+    @NotEmpty
     private String receiverProvince;
 
+    @NotEmpty
     private String receiverCity;
 
+    @NotEmpty
     private String receiverDistrict;
 
+    @NotEmpty
     private String receiverAddress;
 
+    @NotEmpty
     private String receiverZip;
 
     private Date createTime;

@@ -1,12 +1,12 @@
 package com.mmall.pojo;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class Order {
-    private Integer id;
 
-    private Long orderNo;
+    private Long id;
 
     private Integer userId;
 
@@ -32,9 +32,8 @@ public class Order {
 
     private Date updateTime;
 
-    public Order(Integer id, Long orderNo, Integer userId, Integer shippingId, BigDecimal payment, Integer paymentType, Integer postage, Integer status, Date paymentTime, Date sendTime, Date endTime, Date closeTime, Date createTime, Date updateTime) {
+    public Order(Long id, Integer userId, Integer shippingId, BigDecimal payment, Integer paymentType, Integer postage, Integer status, Date paymentTime, Date sendTime, Date endTime, Date closeTime, Date createTime, Date updateTime) {
         this.id = id;
-        this.orderNo = orderNo;
         this.userId = userId;
         this.shippingId = shippingId;
         this.payment = payment;
@@ -53,21 +52,14 @@ public class Order {
         super();
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getOrderNo() {
-        return orderNo;
-    }
-
-    public void setOrderNo(Long orderNo) {
-        this.orderNo = orderNo;
-    }
 
     public Integer getUserId() {
         return userId;

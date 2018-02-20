@@ -81,12 +81,8 @@
       <if test="status != null" >
         status,
       </if>
-      <if test="createTime != null" >
         create_time,
-      </if>
-      <if test="updateTime != null" >
         update_time,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -119,12 +115,8 @@
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
       </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null" >
         now(),
-      </if>
+        now(),
     </trim>
   </insert>
 
@@ -161,9 +153,7 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
         update_time = now(),
-      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -191,13 +181,13 @@
     order by id ASC
   </select>
   
-  <select id="selectByNameAndProductId" resultMap="BaseResultMap" parameterType="map">
+  <select id="getProductByNameOrId" resultMap="BaseResultMap" parameterType="map">
     SELECT
     <include refid="Base_Column_List" />
     from mmall_product
     <where>
       <if test="productName != null">
-        and name LIKE #{productName}
+        and name = #{productName}
       </if>
       <if test="productId != null">
         and id =#{productId}
@@ -205,11 +195,11 @@
     </where>
   </select>
   
-  <select id="selectByNameAndCategoryIds" resultMap="BaseResultMap" parameterType="map">
+  <select id="selectByNameOrCategoryIds" resultMap="BaseResultMap" parameterType="map">
     SELECT
     <include refid="Base_Column_List" />
     from mmall_product
-    where status = 1
+    <where>
     <if test="productName!=null">
       and name LIKE #{productName}
     </if>
@@ -219,12 +209,8 @@
         #{item}
       </foreach>
     </if>
+    </where>
   </select>
   
-  <select id="getProductByCategoryId" resultMap="BaseResultMap" parameterType="int">
-    SELECT 
-    <include refid="Base_Column_List"></include>
-    from mmall_product
-    where category_id = #{categoryId}
-  </select>
+
 </mapper>

@@ -10,6 +10,7 @@ import com.mmall.pojo.User;
 import com.mmall.service.IFileService;
 import com.mmall.service.IProductService;
 import com.mmall.service.IUserService;
+import com.mmall.service.impl.UserServiceImpl;
 import com.mmall.util.PropertiesUtil;
 import com.mmall.vo.ProductVO;
 import org.apache.commons.collections.map.HashedMap;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,13 +27,15 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.io.File;
 import java.util.Map;
 
 /**
  * Created by aa on 2017/6/22.
  */
 @Controller
-@RequestMapping("/managerproduct/")
+@RequestMapping("/manager_product/")
 public class ProductManagerController {
 
     @Autowired
@@ -41,29 +45,31 @@ public class ProductManagerController {
     @Autowired
     private IFileService iFileService;
 
-    //保存产品
-    @RequestMapping("manager_save_product.do")
+    //保存 或者 更新产品
+    @RequestMapping("save_or_update_product.do")
     @ResponseBody
-    public ServerResponse<String> managerSaveProduct(HttpSession session, Product product)
+    public ServerResponse<String> saveOrUpdateProduct(HttpSession session, @Valid Product product , BindingResult bindingResult)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"未登录");
         }
+        if(bindingResult.hasErrors())
+        {
+            return ServerResponse.createByErrorMessage(bindingResult.getFieldError().getDefaultMessage());
+        }
         if(iUserService.checkAdminRole(user).isSuccess())
         {
-            //保存产品信息逻辑
             return iProductService.saveOrUpdateProduct(product);
         }else{
             return ServerResponse.createByErrorMessage("不是管理员");
         }
     }
 
-    //修改产品
-    @RequestMapping("manager_set_sale_status.do")
+    @RequestMapping("sold_out_or_putaway.do")
     @ResponseBody
-    public ServerResponse<String> managerSetSaleStatus(HttpSession session,Integer productId,Integer status)
+    public ServerResponse soldOutOrPutaway(HttpSession session,Integer productId)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
@@ -72,17 +78,19 @@ public class ProductManagerController {
         }
         if(iUserService.checkAdminRole(user).isSuccess())
         {
-            //更新产品状态逻辑
-            return iProductService.setSaleStatus(productId,status);
+            if(productId != null) {
+                return iProductService.soldOutOrPutaway(productId);
+            }
+            return ServerResponse.createByErrorMessage("参数错误");
         }else{
             return ServerResponse.createByErrorMessage("不是管理员");
         }
     }
 
     //拉取产品 信息
-    @RequestMapping("manager_detail.do")
+    @RequestMapping("get_product_detail.do")
     @ResponseBody
-    public ServerResponse<ProductVO> managerDetail(HttpSession session, Integer productId)
+    public ServerResponse<ProductVO> getProductDetail(HttpSession session, Integer productId)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
@@ -91,17 +99,21 @@ public class ProductManagerController {
         }
         if(iUserService.checkAdminRole(user).isSuccess())
         {
-            //得到产品详细逻辑
-            return iProductService.managerProductDetail(productId);
+            if(productId != null) {
+                return iProductService.getProductDetail(productId);
+            }
+            return ServerResponse.createByErrorMessage("参数错误");
         }else{
             return ServerResponse.createByErrorMessage("不是管理员");
         }
     }
 
-    //所有产品
-    @RequestMapping("manager_list.do")
+    //查找单个产品，通过产品名称或者产品id
+    @RequestMapping("get_product_by_name_or_id.do")
     @ResponseBody
-    public ServerResponse<PageInfo> managerList(HttpSession session, @RequestParam(value="pageNum",defaultValue = "1") int pageNum, @RequestParam(value="pageSize",defaultValue = "10") int pageSize)
+    public ServerResponse<ProductVO> getProductsByNameOrId(HttpSession session,
+                                                           @RequestParam(value = "productName",required = false) String productName ,
+                                                           @RequestParam(value = "productId",required = false) Integer productId)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
@@ -110,53 +122,37 @@ public class ProductManagerController {
         }
         if(iUserService.checkAdminRole(user).isSuccess())
         {
-            //得到产品分页数据逻辑
-            return iProductService.getProductList(pageNum,pageSize);
+            if(productId != null || productName != null) {
+                return iProductService.getProductsByNameOrId(productName, productId);
+            }
+            return ServerResponse.createByErrorMessage("参数错误");
         }else{
             return ServerResponse.createByErrorMessage("不是管理员");
         }
     }
 
-    //查找产品，通过产品名称或者产品id
-    @RequestMapping("manager_search_product.do")
+    //查看批量产品，通过产品关键字 或者 分类
+    @RequestMapping("get_products_by_keyword_or_category.do")
     @ResponseBody
-    public ServerResponse<PageInfo> managerSearchProduct(HttpSession session
-            ,String productName
-            ,Integer productId
-            , @RequestParam(value="pageNum",defaultValue = "1") int pageNum
-            , @RequestParam(value="pageSize",defaultValue = "10") int pageSize)
+    public ServerResponse<PageInfo> getProductByKeywordOrCategory(HttpSession session,
+                                @RequestParam(value = "keyword",required = false) String keyword,
+                                @RequestParam(value = "categoryId",required = false) Integer categoryId,
+                                @RequestParam(value = "pageNum",required = false,defaultValue = "1") Integer pageNum,
+                                @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize,
+                                @RequestParam(value = "orderBy",required = false,defaultValue = "") String orderBy)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"未登录");
         }
-        if(iUserService.checkAdminRole(user).isSuccess())
-        {
-            //搜索产品数据逻辑
-            return iProductService.searchProduct(productName,productId,pageNum,pageSize);
-        }else{
-            return ServerResponse.createByErrorMessage("不是管理员");
+        if(iUserService.checkAdminRole(user).isSuccess()) {
+            if(keyword != null || categoryId != null) {
+                return iProductService.getProductByKeywordOrCategory(keyword, categoryId, pageNum, pageSize, orderBy);
+            }
+            return ServerResponse.createByErrorMessage("参数错误");
         }
-    }
-
-    //测试方法
-    @RequestMapping("auto_upload.do")
-    @ResponseBody
-    public ServerResponse<String> autoUpload(HttpSession session,HttpServletRequest request)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"未登录");
-        }
-        if(iUserService.checkAdminRole(user).isSuccess())
-        {   // auto upload // TODO: 2017/8/31
-            String path = request.getSession().getServletContext().getRealPath("upload");
-            return iProductService.autoUpload(path);
-        }else{
-            return ServerResponse.createByErrorMessage("不是管理员");
-        }
+        return ServerResponse.createByErrorMessage("权限不足");
     }
 
     //上传文件
@@ -179,6 +175,7 @@ public class ProductManagerController {
             String path = request.getSession().getServletContext().getRealPath("upload");
             String targerName = iFileService.upload(file,path);
             String url = PropertiesUtil.getProperty("ftp.server.http.prefix")+targerName;
+            //String url = Const.picturePath+targerName;
             Map<String,String> map = Maps.newHashMap();
             map.put("uri",targerName);
             map.put("url",url);
@@ -189,7 +186,7 @@ public class ProductManagerController {
     }
 
     //上传富文本
-    @RequestMapping("richtextUpload.do")
+    @RequestMapping("richtext_upload.do")
     @ResponseBody
     public Map richtextUpload(HttpSession session, @RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request, HttpServletResponse response)
     {

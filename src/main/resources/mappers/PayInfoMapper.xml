@@ -61,12 +61,8 @@
       <if test="platformStatus != null" >
         platform_status,
       </if>
-      <if test="createTime != null" >
         create_time,
-      </if>
-      <if test="updateTime != null" >
         update_time,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -87,12 +83,8 @@
       <if test="platformStatus != null" >
         #{platformStatus,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null" >
         now(),
-      </if>
-      <if test="updateTime != null" >
         now(),
-      </if>
     </trim>
   </insert>
 
@@ -118,9 +110,7 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
         update_time = now(),
-      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>

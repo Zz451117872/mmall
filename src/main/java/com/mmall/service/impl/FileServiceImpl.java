@@ -26,6 +26,7 @@ public class FileServiceImpl implements IFileService {
     public String uploadFile(File file,String path)
     {
         String fileName =file.getName();
+        System.out.println("fileName:"+fileName);
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".")+1);
         String uploadFileName = UUID.randomUUID()+"."+fileExtensionName;
         logger.info("开始上传文件，文件名{}新文件名{}",fileName,uploadFileName);
@@ -44,10 +45,12 @@ public class FileServiceImpl implements IFileService {
             //将文件删除掉
             if(result)
             {
-                targerFile.delete();
+                //targerFile.delete();
                 System.out.println("upload success:"+targerFile.getName());
+            }else{
+                System.out.println("upload faild :"+targerFile.getName());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("文件上传异常",e);
             return null;
         }
@@ -109,7 +112,7 @@ public class FileServiceImpl implements IFileService {
         try {
             file.transferTo(targerFile);
             //将文件上传至FTP服务器
-           boolean result =  FTPUtil.uploadFile(Lists.<File>newArrayList(targerFile));
+//           boolean result =  FTPUtil.uploadFile(Lists.<File>newArrayList(targerFile));
             //将文件删除掉
 //            if(result)
 //            {

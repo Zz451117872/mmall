@@ -1,4 +1,4 @@
-package com.mmall.common;
+package com.mmall.common.filter;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +19,7 @@ public class PowerFilter implements Filter {
         response.addHeader("Access-Control-Allow-Origin","http://127.0.0.1:8020");
         response.addHeader("Access-Control-Allow-Credentials","true");
         response.addHeader("Access-Control-Allow-Headers","x-requested-with,content-type,Access-Control-Allow-Credentials");
+        System.out.println("cros过滤器");
         filterChain.doFilter(servletRequest,response);
     }
 

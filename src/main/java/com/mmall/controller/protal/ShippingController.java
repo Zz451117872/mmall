@@ -7,14 +7,18 @@ import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Shipping;
 import com.mmall.pojo.User;
 import com.mmall.service.IShippingService;
+import com.mmall.vo.ShippingVO;
 import com.sun.javafx.collections.MappingChange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,68 +31,60 @@ public class ShippingController {
     @Autowired
     private IShippingService iShippingService;
 
-    @RequestMapping("add.do")
+    @RequestMapping("add_or_update_shipping.do")
     @ResponseBody
-    public ServerResponse<Map> add(HttpSession session , Shipping shipping)
+    public ServerResponse<Map> addOrUpdateShipping(HttpSession session , @Valid Shipping shipping , BindingResult bindingResult)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iShippingService.add(user.getId(),shipping);
+        if(bindingResult.hasErrors())
+        {
+            return ServerResponse.createByErrorMessage(bindingResult.getFieldError().getDefaultMessage());
+        }
+        return iShippingService.addOrUpdateShipping(user.getId(),shipping);
     }
 
 
-    @RequestMapping("delete.do")
+    @RequestMapping("delete_shipping.do")
     @ResponseBody
-    public ServerResponse<String> delete(HttpSession session , Integer shippingId)
-    {
+    public ServerResponse<String> delete(HttpSession session , Integer shippingId) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        if (user == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iShippingService.delete(user.getId(),shippingId);
-    }
-
-
-    @RequestMapping("update.do")
-    @ResponseBody
-    public ServerResponse<Map> update(HttpSession session , Shipping shipping)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        if (shippingId != null){
+            return iShippingService.delete(user.getId(), shippingId);
         }
-        return iShippingService.update(user.getId(),shipping);
-    }
-
-
-    @RequestMapping("select.do")
-    @ResponseBody
-    public ServerResponse<Shipping> select(HttpSession session , Integer shippingId)
-    {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null)
-        {
-            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        return iShippingService.select(user.getId(),shippingId);
+        return ServerResponse.createByErrorMessage("参数错误");
     }
 
     @RequestMapping("list.do")
     @ResponseBody
-    private ServerResponse<PageInfo> list(@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
-                                          @RequestParam(value = "pageSize",defaultValue = "10") int pageSize,
-                                          HttpSession session)
+    private ServerResponse<List<Shipping>> list(HttpSession session)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iShippingService.list(user.getId() ,pageNum,pageSize);
+        return iShippingService.list(user.getId());
+    }
+
+    @RequestMapping("shipping.do")
+    @ResponseBody
+    private ServerResponse<Shipping> getShipping(HttpSession session,Integer shippingId)
+    {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null)
+        {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        if(shippingId != null) {
+            return iShippingService.getShipping(user.getId(), shippingId);
+        }
+        return ServerResponse.createByErrorMessage("参数错误");
     }
 }

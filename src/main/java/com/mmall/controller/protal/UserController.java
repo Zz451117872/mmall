@@ -8,14 +8,18 @@ import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IJedisService;
 import com.mmall.service.IUserService;
+import com.mmall.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 /**
  * Created by aa on 2017/6/19.
@@ -23,92 +27,69 @@ import javax.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/user/")
 public class UserController {
+
     @Autowired
     private IUserService iUserService;
+
     @Autowired
     private IJedisService iJedisService;
-    @ Autowired
-    private Gson gson;
 
-    @RequestMapping(value = "is_login.do", method= RequestMethod.POST)
-    @ResponseBody
-    public ServerResponse isLogin(String username)
-    {
-        try {
-           String user =  iJedisService.hget(username,"user");
-            if(user != null)
-            {
-                return ServerResponse.createBySuccess();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ServerResponse.createByError();
-    }
 
-    //前端登录
     @RequestMapping(value = "login.do", method= RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> login(String username, String password, HttpSession session,HttpServletResponse resp)
+    public ServerResponse<String> login(@RequestParam(value = "username",required = true) String username,
+                                        @RequestParam(value = "password",required = true) String password, HttpSession session ,
+                                        @RequestParam(value = "isManager",required = false,defaultValue = "false") Boolean isManager, HttpServletResponse resp)
     {
         ServerResponse<User> response = iUserService.login(username,password);
         if(response.isSuccess())
         {
             User user = response.getData();
-            session.setAttribute(Const.CURRENT_USER,user);
-            try {
-                iJedisService.hset(user.getUsername(),"user",gson.toJson(user));
-            } catch (Exception e) {
-                System.out.println("数据入缓存出错");
-                e.printStackTrace();
+            if(isManager && user.getRole() != Const.Role.ROLE_ADMIN)
+            {
+                return ServerResponse.createByErrorMessage("不是管理员，无法登录");
             }
+            session.setAttribute(Const.CURRENT_USER,user);
+            return ServerResponse.createBySuccess(user.getUsername());
         }
-        return response;
+        return ServerResponse.createByErrorMessage(response.getMsg());
     }
 
     //登出
-  @RequestMapping(value = "logout.do" ,method = RequestMethod.POST)
+    @RequestMapping(value = "logout.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> logout(HttpSession session)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        try {
-            iJedisService.hset(user.getUsername(),"user",null);
-        } catch (Exception e) {
-            System.out.println("数据入缓存出错");
-            e.printStackTrace();
-        }
         session.removeAttribute(Const.CURRENT_USER);
+        session.invalidate();
         return ServerResponse.createBySuccess();
     }
 
     //前端注册
-    @RequestMapping(value = "register.do" ,method = RequestMethod.POST)
+    @RequestMapping(value = "add_or_update_user.do" ,method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> register(User user)
+    public ServerResponse<String> addUser(@Valid User user, BindingResult bindingResult)
     {
-        return iUserService.register(user);
+        if(bindingResult.hasErrors())
+        {
+            return ServerResponse.createByErrorMessage(bindingResult.getFieldError().getDefaultMessage());
+        }
+        return iUserService.addOrUpdateUser(user);
     }
 
     //表单验证
     @RequestMapping(value = "check_valid.do" ,method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> checkValid(String str,String type)
-    {
-        return iUserService.checkValid(str,type);
-    }
-
-    //获取用户信息
-    @RequestMapping(value = "get_user_info.do" ,method = RequestMethod.POST)
-    @ResponseBody
-    public ServerResponse<User> getUserInfo(HttpSession session)
+    public Boolean checkValid(HttpSession session,String name,String value)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user != null)
         {
-            return ServerResponse.createBySuccess(user);
+            return iUserService.checkValid(user.getId(),name,value);
+        }else {
+            return iUserService.checkValid(null, name, value);
         }
-        return ServerResponse.createByErrorMessage("无法获取用户信息");
     }
 
     //密码忘记提示问题
@@ -146,13 +127,13 @@ public class UserController {
             return ServerResponse.createByErrorMessage("用户未登陆");
         }
 
-        return iUserService.resetPassword(passwordOld,passwordNew,user);
+        return iUserService.updatePassword(passwordOld,passwordNew,user);
     }
 
     //更新用户信息
     @RequestMapping(value = "update_information.do" ,method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> update_information(HttpSession session,User user)
+    public ServerResponse<String> update_information(HttpSession session,User user)
     {
         User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
         if(currentUser == null)
@@ -161,12 +142,7 @@ public class UserController {
         }
         user.setId(currentUser.getId());
         user.setUsername(currentUser.getUsername());
-        ServerResponse<User> response = iUserService.updateInformation(user);
-        if(response.isSuccess())
-        {
-            session.setAttribute(Const.CURRENT_USER,response.getData());
-        }
-        return response;
+        return iUserService.addOrUpdateUser(user);
     }
 
     @RequestMapping(value = "get_information.do" ,method = RequestMethod.POST)

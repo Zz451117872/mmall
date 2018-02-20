@@ -58,12 +58,8 @@
       <if test="sortOrder != null" >
         sort_order,
       </if>
-      <if test="createTime != null" >
         create_time,
-      </if>
-      <if test="updateTime != null" >
         update_time,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -81,12 +77,8 @@
       <if test="sortOrder != null" >
         #{sortOrder,jdbcType=INTEGER},
       </if>
-      <if test="createTime != null" >
         now(),
-      </if>
-      <if test="updateTime != null" >
         now(),
-      </if>
     </trim>
   </insert>
 
@@ -108,9 +100,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
+
         update_time = now(),
-      </if>
+
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -126,25 +118,27 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  
-  <select id="selectCategoryChildByParentId" resultMap="BaseResultMap" parameterType="int">
+
+  <select id="getByCategoryName" parameterType="string" resultMap="BaseResultMap">
     SELECT
-      <include refid="Base_Column_List"/>
+    <include refid="Base_Column_List"/>
     from mmall_category
-    WHERE parent_id=#{parentId}
+    where name = #{name}
   </select>
-  
-  <select id="getCategoryByParentId" resultMap="BaseResultMap" parameterType="int">
-    SELECT 
-    <include refid="Base_Column_List"></include>
-    from mmall_category
-    where parent_id =#{parentId}
-  </select>
-  
-  <select id="getParentCategory" resultMap="BaseResultMap">
+
+  <select id="getChildCategory" parameterType="int" resultMap="BaseResultMap">
     SELECT
-    <include refid="Base_Column_List"></include>
+    <include refid="Base_Column_List"/>
     from mmall_category
-    where parent_id = 0
+    where parent_id = #{parentId}
   </select>
+
+  <update id="updateCategoryStatusByCategoryIds" parameterType="list">
+    UPDATE mmall_category
+    set status = #{status}
+    where id IN
+    <foreach collection="categoryIds" item="item" index="index" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </update>
 </mapper>
