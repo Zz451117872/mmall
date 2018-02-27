@@ -3,27 +3,21 @@ package com.mmall.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.mmall.common.Const;
 import com.mmall.common.ServerResponse;
 import com.mmall.dao.CategoryMapper;
-import com.mmall.dao.ProductMapper;
+import com.mmall.exception.AppException;
 import com.mmall.pojo.Category;
-import com.mmall.pojo.Product;
 import com.mmall.service.ICategoryService;
-import com.mmall.service.IProductService;
 import com.mmall.util.DateTimeUtil;
 import com.mmall.vo.CategoryVO;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
-
 
 /**
  * Created by aa on 2017/6/21.
@@ -89,19 +83,20 @@ public class CategoryServiceImpl implements ICategoryService {
                 categoryList = categoryMapper.getChildCategory(parentId);
             }
 
+
             if (categoryList != null && !categoryList.isEmpty()) {
                 List<CategoryVO> result = Lists.newArrayList();
                 for (Category category : categoryList) {
                     result.add(convertCategoryVO(category, isFillChildCategory));
                 }
+
                 if(pageNum != null && pageSize != null)
                 {
                     PageInfo pageInfo = new PageInfo(categoryList);
                     pageInfo.setList(result);
                     return ServerResponse.createBySuccess(pageInfo);
-                }else{
-                    return ServerResponse.createBySuccess(result);
                 }
+                return ServerResponse.createBySuccess(result);
             }
             return ServerResponse.createBySuccess(null);
         } catch (Exception e) {
@@ -109,6 +104,7 @@ public class CategoryServiceImpl implements ICategoryService {
             return ServerResponse.createByErrorMessage("未知错误");
         }
     }
+
 
     //获取 所有子分类的id
     public List<Integer> getChildCategory(Integer categoryId) {
@@ -124,34 +120,32 @@ public class CategoryServiceImpl implements ICategoryService {
         }
     }
 
+    //删除产品分类
     @Override
+    @Transactional
     public ServerResponse deleteCategory(Integer categoryId) {
-        try {
-            if (categoryId != null) {
-                Category category = categoryMapper.selectByPrimaryKey(categoryId);
-                if (category != null) {
-                    if (category.getStatus()) {
-                        List<Integer> categoryIds = getChildCategory(categoryId);
-                        if (categoryIds != null && !categoryIds.isEmpty()) {
-                            int result = categoryMapper.updateCategoryStatusByCategoryIds(categoryIds,0);
-                            if (result > 0) {
-                                return ServerResponse.createBySuccess();
-                            }
-                            return ServerResponse.createByErrorMessage("数据操作错误");
+        if (categoryId != null) {
+            Category category = categoryMapper.selectByPrimaryKey(categoryId);
+            if (category != null) {
+                if (category.getStatus()) {
+                    List<Integer> categoryIds = getChildCategory(categoryId);
+                    if (categoryIds != null && !categoryIds.isEmpty()) {
+                        int result = categoryMapper.updateCategoryStatusByCategoryIds(categoryIds, Const.CategoryStatusEnum.DEPRECATED.getCode());
+                        if (result == categoryIds.size() ) {
+                            return ServerResponse.createBySuccess();
                         }
-                        return ServerResponse.createByErrorMessage("app错误");
                     }
-                    return ServerResponse.createByErrorMessage("分类已弃用");
+                    logger.error("deleteCategory faild");
+                    throw new AppException(Const.ErrorEnum.DATABASE_ERROR);
                 }
-                return ServerResponse.createByErrorMessage("分类不存在");
+                return ServerResponse.createByErrorMessage("分类已弃用");
             }
-            return ServerResponse.createByErrorMessage("参数错误");
-        } catch (Exception e) {
-            logger.error("deleteCategory", e);
-            return ServerResponse.createByErrorMessage("未知错误");
+            return ServerResponse.createByErrorMessage("分类不存在");
         }
+        return ServerResponse.createByErrorMessage("参数错误");
     }
 
+    //获取单个分类信息
     public ServerResponse getCategoryById(Integer categoryId) {
         try {
             if (categoryId != null) {
@@ -168,6 +162,7 @@ public class CategoryServiceImpl implements ICategoryService {
         }
     }
 
+    // 获取 目标分类 及其所有 子孙分类
     private void doGetChildCategory(Integer categoryId, List<Integer> result) {
         try {
             if (categoryId != null && result != null) {

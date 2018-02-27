@@ -94,7 +94,7 @@ public class SolrServiceImpl implements ISolrService {
     public ServerResponse fillAllProductToSolr()
     {
         int start = 1;
-        PageInfo pageInfo = iProductService.getProductListToSolr(start,100);
+        PageInfo pageInfo = null ; //iProductService.getProductListToSolr(start,100);
         List<Product> productList = pageInfo.getList();
         try {
             fillProductListToSolr(productList);
@@ -106,7 +106,7 @@ public class SolrServiceImpl implements ISolrService {
         if(!pageInfo.isIsLastPage())
         {
             start++;
-            pageInfo = iProductService.getProductListToSolr(start,100);
+            pageInfo = null; // iProductService.getProductListToSolr(start,100);
             try {
                 fillProductListToSolr(pageInfo.getList());
             } catch (Exception e) {

@@ -152,6 +152,7 @@ public class OrderServiceImpl implements IOrderService {
                    order.setPaymentType(Const.PaymentTypeEnum.ONLINE_PAY.getCode());
                    order.setUserId(userId);
                    order.setShippingId(shippingId);
+                   order.setCreateTime(new Date());
                    order.setPayment(payment);
                    int resultCount = orderMapper.insert(order);
                    if (resultCount > 0) {
@@ -286,6 +287,7 @@ public class OrderServiceImpl implements IOrderService {
         }
     }
 
+    // 用户验证收货
     public ServerResponse verifyAccepted(Integer id, Long orderNo)
     {
         try{
@@ -402,9 +404,9 @@ public class OrderServiceImpl implements IOrderService {
             }
 
             List<Order> orderList = orderMapper.getOrderByMultiCondition(userId,orderStatus,createTime);
-
+                PageInfo pageInfo = new PageInfo(orderList);
                 if (orderList != null && !orderList.isEmpty()) {
-                    PageInfo pageInfo = new PageInfo(orderList);
+
                     if(convert) {
                         pageInfo.setList(convertOrderVOs(null, orderList));
                     }else{
@@ -413,7 +415,7 @@ public class OrderServiceImpl implements IOrderService {
                     return ServerResponse.createBySuccess(pageInfo);
                 }
 
-            return ServerResponse.createBySuccess(null);
+            return ServerResponse.createBySuccess(pageInfo);
         }catch (Exception e)
         {
             logger.error("getOrderByMultiCondition:",e);
@@ -421,6 +423,7 @@ public class OrderServiceImpl implements IOrderService {
         }
     }
 
+    // 管理员发货
     @Override
     public ServerResponse sendGoods(Long orderNo)
     {
@@ -445,6 +448,33 @@ public class OrderServiceImpl implements IOrderService {
         }catch (Exception e)
         {
             logger.error("sendGoods:",e);
+            return ServerResponse.createByErrorMessage("未知错误");
+        }
+    }
+
+    //管理员关闭订单
+    public ServerResponse closeOrder(Long orderNo){
+        try {
+            if(orderNo != null) {
+                Order order = orderMapper.selectByOrderno(orderNo);
+                if (order != null) {
+                    if (order.getStatus() == Const.OrderStatusEnum.SUCCESS.getCode()) {
+                        order.setStatus(Const.OrderStatusEnum.CLOSED.getCode());
+                        order.setCloseTime(new Date());
+                        int result = orderMapper.updateByPrimaryKeySelective(order);
+                        if(result > 0) {
+                            return ServerResponse.createBySuccess();
+                        }
+                        return ServerResponse.createByErrorMessage("数据操作错误");
+                    }
+                    return ServerResponse.createByErrorMessage("订单状态错误");
+                }
+                return ServerResponse.createByErrorMessage("订单不存在");
+            }
+            return ServerResponse.createByErrorMessage("参数错误");
+        }catch (Exception e)
+        {
+            logger.error("closeOrder:",e);
             return ServerResponse.createByErrorMessage("未知错误");
         }
     }
@@ -559,6 +589,7 @@ public class OrderServiceImpl implements IOrderService {
         }
     }
 
+    // 用户支付
     @Override
     public ServerResponse pay(Long orderNo, Integer userId, String path)
     {
@@ -632,16 +663,7 @@ public class OrderServiceImpl implements IOrderService {
                 String qrPath = String.format(path+"/qr-%s.png", response.getOutTradeNo()); //二维码文件的全路径名
                 String qrFileName = String.format("qr-%s.png",response.getOutTradeNo());    //二维码的文件名
                 ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrPath);        //大致意思应该是把二维码数据写入文件
-//                File targerFile = new File(path,qrFileName);        //这个文件是上传至ftp服务器的二维 码文件
-//                try {
-//                    FTPUtil.uploadFile(Lists.<File>newArrayList(targerFile));   //上传
-//                } catch (IOException e) {
-//                    logger.error("上传二维码异常",e);
-//                    e.printStackTrace();
-//                }
-//                logger.info("qrPath:" + qrPath);
-//                String qrUrl = PropertiesUtil.getProperty("ftp.server.http.prefix")+targerFile.getName();
-                String qrUrl = Const.picturePath+qrFileName;
+                String qrUrl = PropertiesUtil.getProperty("qr.url")+qrFileName;
                 resultMap.put("qrUrl",qrUrl);
                 return ServerResponse.createBySuccess(resultMap);
             case FAILED:
@@ -656,6 +678,7 @@ public class OrderServiceImpl implements IOrderService {
         }
     }
 
+    //前台判断订单是否支付
     public ServerResponse isPayed(Integer userId, Long orderNo)
     {
         try {
@@ -676,6 +699,7 @@ public class OrderServiceImpl implements IOrderService {
             return ServerResponse.createByErrorMessage("未知错误");
         }
     }
+
     //支付宝回调逻辑
     @Override
     @Transactional

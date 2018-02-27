@@ -11,9 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -28,7 +27,7 @@ public class CartController {
     private ICartService iCartService;
 
     //添加购物条目
-    @RequestMapping("add_cart.do")
+    @RequestMapping(value = "add_cart.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse addCart(HttpSession session , @Valid Cart cart , BindingResult bindingResult)
     {
@@ -46,7 +45,7 @@ public class CartController {
 
 
     //更新购物 数量
-    @RequestMapping("update_quantity.do")
+    @RequestMapping(value = "update_quantity.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse updateQuantity(HttpSession session ,Integer quantity,Integer cartId)
     {
@@ -62,7 +61,7 @@ public class CartController {
     }
 
     //删除购物 条目
-    @RequestMapping("delete_by_cartids.do")
+    @RequestMapping(value = "delete_by_cartids.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse deleteByCartIds(HttpSession session , String cartIds)
     {
@@ -78,7 +77,7 @@ public class CartController {
     }
 
     //我的购物车
-    @RequestMapping("my_cart_list.do")
+    @RequestMapping(value = "my_cart_list.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<CartVO> myCartList(HttpSession session)
     {

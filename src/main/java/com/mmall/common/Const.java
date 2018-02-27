@@ -13,7 +13,7 @@ public class Const {
     public static final Integer cartCapacityUpperLimit = 10;
     public static final Integer shippingCapacityUpperLimit = 6;
     public static final Integer orderPayTimeoutLimit = 10*60*1000; //分钟
-    public static final String picturePath = "http://localhost:8080/upload/";
+    public static final String INITIAL_PASSWORD = "1234";
 
     //购物条目 在购物车中的状态
     public interface Cart{

@@ -9,19 +9,15 @@ import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.dao.OrderMapper;
-import com.mmall.dao.PayInfoMapper;
-import com.mmall.pojo.Order;
-import com.mmall.pojo.PayInfo;
 import com.mmall.pojo.User;
 import com.mmall.service.IOrderService;
-import com.mmall.util.DateTimeUtil;
-import com.mmall.vo.CartVO;
 import com.mmall.vo.OrderVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -42,11 +38,9 @@ public class OrderController {
 
     @Autowired
     private IOrderService iOrderService;
-    @Autowired
-    private OrderMapper orderMapper;
 
-    //生成订单
-    @RequestMapping("create_order.do")
+    //通过 购物条目集合 与 收货地址 生成订单
+    @RequestMapping(value = "create_order.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<Long> createOrder(HttpSession session, Integer shippingId , String cartIds)
     {
@@ -58,8 +52,8 @@ public class OrderController {
         return iOrderService.createOrder(user.getId(),shippingId,cartIds);
     }
 
-    //取消订单
-    @RequestMapping("cancel_order.do")
+    //通过 订单号 取消订单
+    @RequestMapping(value = "cancel_order.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<OrderVO> cancel(HttpSession session, Long orderNo )
     {
@@ -67,12 +61,12 @@ public class OrderController {
         if(user == null)
         {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
+        }                           //false表示非管理员取消订单
         return iOrderService.cancel(false,user.getId(),orderNo);
     }
 
-    //验证收货
-    @RequestMapping("verify_accepted.do")
+    //通过 订单号 验证收货
+    @RequestMapping(value = "verify_accepted.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse verifyAccepted(HttpSession session, Long orderNo )
     {
@@ -84,8 +78,8 @@ public class OrderController {
         return iOrderService.verifyAccepted(user.getId(),orderNo);
     }
 
-    //订单详细
-    @RequestMapping("order_detail.do")
+    //通过 订单号 获取 订单详细
+    @RequestMapping(value = "order_detail.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<OrderVO> detail(HttpSession session ,Long orderNo)
     {
@@ -97,8 +91,8 @@ public class OrderController {
         return iOrderService.getOrderDetail(user.getId(),orderNo);
     }
 
-    //所有订单
-    @RequestMapping("my_order_list.do")
+    //通过 订单状态 查询订单
+    @RequestMapping(value = "my_order_list.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<PageInfo> myOrderList(HttpSession session ,
                                          @RequestParam(value = "status",required = false,defaultValue = "0")Integer status,
@@ -113,8 +107,8 @@ public class OrderController {
         return iOrderService.myOrderList(user.getId(),status,pageNum,pageSize);
     }
 
-    //支付
-    @RequestMapping("pay.do")
+    //通过 订单号 支付
+    @RequestMapping(value = "pay.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse pay(HttpSession session, Long orderNo)
     {
@@ -127,9 +121,10 @@ public class OrderController {
         return iOrderService.pay(orderNo,user.getId(),path);
     }
 
-    @RequestMapping("isPayed.do")
+    //通过 订单号 检查 该订单是否已支付
+    @RequestMapping(value = "isPayed.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse isPayed(HttpSession session,Long orderNo)
+    public ServerResponse isPayed( HttpSession session , Long orderNo )
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null)
@@ -138,6 +133,7 @@ public class OrderController {
         }
         return iOrderService.isPayed(user.getId(),orderNo);
     }
+
     //支付宝回调
     @RequestMapping("alipay_callback.do")
     @ResponseBody

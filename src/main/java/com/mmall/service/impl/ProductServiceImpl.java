@@ -14,17 +14,13 @@ import com.mmall.service.IFileService;
 import com.mmall.service.IProductService;
 import com.mmall.service.ISolrService;
 import com.mmall.util.DateTimeUtil;
-import com.mmall.util.PropertiesUtil;
 import com.mmall.vo.ProductVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by aa on 2017/6/22.
@@ -38,32 +34,22 @@ public class ProductServiceImpl implements IProductService {
     private CategoryMapper categoryMapper;
     @Autowired
     private ICategoryService iCategoryService;
-    @Autowired
-    private ISolrService iSolrService;
+
     @Autowired
     private IFileService iFileService;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    //通过solr 查询
-    @Override
-    public PageInfo getProductListToSolr(Integer pageNum,Integer pageSize)
-    {
-        PageHelper.startPage(pageNum,pageSize);
-        List<Product> productList = productMapper.getList();
 
-        PageInfo pageInfo = new PageInfo(productList);
-        return pageInfo;
-    }
 
-    //保存和更新产品，是根据id来判断。如果为空则为保存，反之则为更新
+    //保存和更新产品
     @Override
     public ServerResponse<String> saveOrUpdateProduct(Product product)
     {
         try {
             if (product != null && product.getName() != null) {
                 try {
-                    if (product.getStatus() != null) {
+                    if (product.getStatus() != null) { //验证产品 状态是否有效
                         Const.ProductStatusEnum.codeof(product.getStatus());
                     }
                 }catch (Exception e)
@@ -93,6 +79,7 @@ public class ProductServiceImpl implements IProductService {
         }
     }
 
+    //下架 或者 上架 产品
     public ServerResponse soldOutOrPutaway(Integer productId)
     {
         try{
@@ -129,11 +116,11 @@ public class ProductServiceImpl implements IProductService {
     public ServerResponse<ProductVO> getProductsByNameOrId(String productName,Integer productId)
     {
        try{
-           productName =productName == null || productName.equals("") ? null : productName;
+           productName = productName == null || productName.equals("") ? null : productName;
            if(productName != null || productId != null ) {
                Product product = productMapper.getProductByNameOrId(productName, productId);
                if(product != null) {
-                   return ServerResponse.createBySuccess(convertProductVO(product));
+                   return ServerResponse.createBySuccess( convertProductVO(product) );
                }
                return ServerResponse.createByErrorMessage("产品不存在");
            }
@@ -191,7 +178,7 @@ public class ProductServiceImpl implements IProductService {
                     String[] orderByArray = orderBy.split(":");
                     PageHelper.orderBy(orderByArray[0] + " " + orderByArray[1]);//排序
                 }
-            }//通过MAPPING 得到结果集
+            }
             List<Product> products = productMapper.selectByNameOrCategoryIds(StringUtils.isBlank(keyword) ? null : keyword, categoryIds.size() == 0 ? null : categoryIds);
 
            if(products != null && !products.isEmpty())

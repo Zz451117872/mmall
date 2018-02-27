@@ -1,14 +1,10 @@
 package com.mmall.controller.protal;
 
-import com.github.pagehelper.PageInfo;
-import com.google.gson.Gson;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
-import com.mmall.service.IJedisService;
 import com.mmall.service.IUserService;
-import com.mmall.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -31,10 +27,7 @@ public class UserController {
     @Autowired
     private IUserService iUserService;
 
-    @Autowired
-    private IJedisService iJedisService;
-
-
+    //登陆
     @RequestMapping(value = "login.do", method= RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> login(@RequestParam(value = "username",required = true) String username,
@@ -61,9 +54,12 @@ public class UserController {
     public ServerResponse<String> logout(HttpSession session)
     {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        session.removeAttribute(Const.CURRENT_USER);
-        session.invalidate();
-        return ServerResponse.createBySuccess();
+        //if( user != null ){
+            session.removeAttribute(Const.CURRENT_USER);
+            session.invalidate();
+            return ServerResponse.createBySuccess();
+       // }
+        //return ServerResponse.createByErrorMessage("not login");
     }
 
     //前端注册
@@ -104,7 +100,7 @@ public class UserController {
     @RequestMapping(value = "forget_check_answer.do" ,method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> forgetCheckAnswer(String username,String question,String answer)
-    {
+    {                   //当问题验证成功后会返回一个token给前台，需要在token失效前重置密码
         return iUserService.checkAnswer(username,question,answer);
     }
 

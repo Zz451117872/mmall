@@ -7,19 +7,14 @@ import com.mmall.pojo.Category;
 import com.mmall.pojo.User;
 import com.mmall.service.ICategoryService;
 import com.mmall.service.IUserService;
-import com.mmall.service.impl.UserServiceImpl;
-import com.mmall.vo.CategoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  * Created by aa on 2017/6/21.
@@ -34,7 +29,7 @@ public class CategoryManagerController {
     @Autowired
     private ICategoryService iCategoryService;
 
-    //创建 或者 更新 分类
+    //创建 或者 更新 产品分类
     @RequestMapping(value = "save_or_update_category.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse saveOrUpdateCategory(HttpSession session, @Validated Category category,BindingResult bindingResult)

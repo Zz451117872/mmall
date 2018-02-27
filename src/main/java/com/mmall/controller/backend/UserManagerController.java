@@ -5,15 +5,11 @@ import com.mmall.common.Const;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
-import com.mmall.service.impl.UserServiceImpl;
 import com.mmall.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  * Created by aa on 2017/6/20.
@@ -21,11 +17,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/manager_user/")
 public class UserManagerController {
+
     @Autowired
     private IUserService iUserService;
 
-
-
+    // 通过 用户名 或者 用户角色 获取用户集合
     @RequestMapping(value = "get_all_user.do", method= RequestMethod.POST)
     public ServerResponse<PageInfo<UserVO>> getUserByUsernameOrRole(HttpSession session,
                                                                      @RequestParam(value = "username",required = false) String username,
@@ -48,6 +44,7 @@ public class UserManagerController {
         return ServerResponse.createByErrorMessage("参数错误");
     }
 
+    // 冻结用户
     @RequestMapping(value = "freeze_user.do", method= RequestMethod.POST)
     public ServerResponse freezeUser(HttpSession session,Integer userId)
     {
@@ -63,6 +60,7 @@ public class UserManagerController {
         return iUserService.freezeUser(userId);
     }
 
+    //重置密码
     @RequestMapping(value = "reset_password.do", method= RequestMethod.POST)
     public ServerResponse resetPassword(HttpSession session,Integer userId)
     {

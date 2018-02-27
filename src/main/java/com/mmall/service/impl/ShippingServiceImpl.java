@@ -28,38 +28,46 @@ public class ShippingServiceImpl implements IShippingService {
     @Autowired
     private ShippingMapper shippingMapper;
 
+    //新增 或者 更新 收货地址
     @Override
     public ServerResponse addOrUpdateShipping(Integer userId , Shipping shipping)
     {
-        if(userId == null || shipping == null)
+        try{
+            if(userId == null || shipping == null)
+            {
+                return ServerResponse.createByErrorMessage("参数错误");
+            }
+            if(shipping.getId() == null)
+            {       // 新增地址
+                int shippingCapacity = shippingMapper.selectByUserid( userId ).size();
+                if(shippingCapacity >= Const.shippingCapacityUpperLimit)
+                {
+                    return ServerResponse.createByErrorMessage("达到地址数量上限");
+                }
+                shipping.setUserId(userId);
+                int num = shippingMapper.insert(shipping);
+                if(num > 0)
+                {
+                    return ServerResponse.createBySuccess();
+                }
+                return ServerResponse.createByError();
+            }else{      //更新地址
+                shipping.setUserId(userId); //只能修改自己的收货地址
+                int num = shippingMapper.updateByShipping(shipping);
+                if(num >0)
+                {
+                    return ServerResponse.createBySuccess("更新成功");
+                }
+                return ServerResponse.createByErrorMessage("更新失败");
+            }
+        }catch (Exception e )
         {
-            return ServerResponse.createByErrorMessage("参数错误");
-        }
-        if(shipping.getId() == null)
-        {
-            int shippingCapacity = shippingMapper.selectByUserid(userId).size();
-            if(shippingCapacity >= Const.shippingCapacityUpperLimit)
-            {
-                return ServerResponse.createByErrorMessage("达到地址数量上限");
-            }
-            shipping.setUserId(userId);
-            int num = shippingMapper.insert(shipping);
-            if(num > 0)
-            {
-                return ServerResponse.createBySuccess();
-            }
-            return ServerResponse.createByError();
-        }else{
-            shipping.setUserId(userId); //需要设置对象用的userid，避免横向越权
-            int num = shippingMapper.updateByShipping(shipping);
-            if(num >0)
-            {
-                return ServerResponse.createBySuccess("新增地址成功");
-            }
-            return ServerResponse.createByErrorMessage("新增地址错误");
+            logger.error(" " , e );
+            return ServerResponse.createByErrorMessage("未知错误");
         }
     }
 
+    //删除收货地址
     @Override
     public ServerResponse<String> delete(Integer userId , Integer shippingId)
     {
@@ -79,6 +87,7 @@ public class ShippingServiceImpl implements IShippingService {
         }
     }
 
+    //查询个人所有收货地址
     @Override
     public ServerResponse<List<Shipping>> list(Integer userId)
     {
@@ -98,10 +107,11 @@ public class ShippingServiceImpl implements IShippingService {
         }
     }
 
+    //查询单个地址
     public ServerResponse<Shipping> getShipping(Integer id, Integer shippingId)
     {
         try {
-            if(id != null && shippingId != null) {
+            if(id != null && shippingId != null) {  //这里要用 用户Id 和 地址id 两个参数，只能查询自己的地址
                 Shipping shipping = shippingMapper.selectByPrimaryKey(shippingId);
                 if(shipping != null) {
                     return ServerResponse.createBySuccess(shipping);

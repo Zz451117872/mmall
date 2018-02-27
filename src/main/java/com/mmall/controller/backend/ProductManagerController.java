@@ -10,16 +10,14 @@ import com.mmall.pojo.User;
 import com.mmall.service.IFileService;
 import com.mmall.service.IProductService;
 import com.mmall.service.IUserService;
-import com.mmall.service.impl.UserServiceImpl;
 import com.mmall.util.PropertiesUtil;
 import com.mmall.vo.ProductVO;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.File;
 import java.util.Map;
 
 /**
@@ -46,7 +43,7 @@ public class ProductManagerController {
     private IFileService iFileService;
 
     //保存 或者 更新产品
-    @RequestMapping("save_or_update_product.do")
+    @RequestMapping(value = "save_or_update_product.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> saveOrUpdateProduct(HttpSession session, @Valid Product product , BindingResult bindingResult)
     {
@@ -62,12 +59,12 @@ public class ProductManagerController {
         if(iUserService.checkAdminRole(user).isSuccess())
         {
             return iProductService.saveOrUpdateProduct(product);
-        }else{
-            return ServerResponse.createByErrorMessage("不是管理员");
         }
+        return ServerResponse.createByErrorMessage("不是管理员");
     }
 
-    @RequestMapping("sold_out_or_putaway.do")
+    // 下架 或者 上架 产品
+    @RequestMapping(value = "sold_out_or_putaway.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse soldOutOrPutaway(HttpSession session,Integer productId)
     {
@@ -88,7 +85,7 @@ public class ProductManagerController {
     }
 
     //拉取产品 信息
-    @RequestMapping("get_product_detail.do")
+    @RequestMapping(value = "get_product_detail.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<ProductVO> getProductDetail(HttpSession session, Integer productId)
     {
@@ -103,13 +100,12 @@ public class ProductManagerController {
                 return iProductService.getProductDetail(productId);
             }
             return ServerResponse.createByErrorMessage("参数错误");
-        }else{
-            return ServerResponse.createByErrorMessage("不是管理员");
         }
+        return ServerResponse.createByErrorMessage("不是管理员");
     }
 
     //查找单个产品，通过产品名称或者产品id
-    @RequestMapping("get_product_by_name_or_id.do")
+    @RequestMapping(value = "get_product_by_name_or_id.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<ProductVO> getProductsByNameOrId(HttpSession session,
                                                            @RequestParam(value = "productName",required = false) String productName ,
@@ -126,13 +122,12 @@ public class ProductManagerController {
                 return iProductService.getProductsByNameOrId(productName, productId);
             }
             return ServerResponse.createByErrorMessage("参数错误");
-        }else{
-            return ServerResponse.createByErrorMessage("不是管理员");
         }
+        return ServerResponse.createByErrorMessage("不是管理员");
     }
 
-    //查看批量产品，通过产品关键字 或者 分类
-    @RequestMapping("get_products_by_keyword_or_category.do")
+    //通过产品关键字 或者 产品分类 获取产品集合
+    @RequestMapping(value = "get_products_by_keyword_or_category.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<PageInfo> getProductByKeywordOrCategory(HttpSession session,
                                 @RequestParam(value = "keyword",required = false) String keyword,
@@ -156,7 +151,7 @@ public class ProductManagerController {
     }
 
     //上传文件
-    @RequestMapping("upload.do")
+    @RequestMapping(value = "upload.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<Map<String,String>> upload(HttpSession session,MultipartFile file, HttpServletRequest request)
     {
@@ -173,20 +168,18 @@ public class ProductManagerController {
         if(iUserService.checkAdminRole(user).isSuccess())
         {
             String path = request.getSession().getServletContext().getRealPath("upload");
-            String targerName = iFileService.upload(file,path);
+            String  targerName = iFileService.upload(file,path);
             String url = PropertiesUtil.getProperty("ftp.server.http.prefix")+targerName;
-            //String url = Const.picturePath+targerName;
             Map<String,String> map = Maps.newHashMap();
             map.put("uri",targerName);
             map.put("url",url);
             return ServerResponse.createBySuccess(map);
-        }else{
-            return ServerResponse.createByErrorMessage("不是管理员");
         }
+        return ServerResponse.createByErrorMessage("不是管理员");
     }
 
     //上传富文本
-    @RequestMapping("richtext_upload.do")
+    @RequestMapping(value = "richtext_upload.do", method = RequestMethod.POST)
     @ResponseBody
     public Map richtextUpload(HttpSession session, @RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request, HttpServletResponse response)
     {

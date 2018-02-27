@@ -3,7 +3,6 @@ package com.mmall.controller.protal;
 import com.github.pagehelper.PageInfo;
 import com.mmall.common.ServerResponse;
 import com.mmall.service.IProductService;
-import com.mmall.service.ISolrService;
 import com.mmall.vo.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,10 +19,8 @@ public class ProductController {
 
     @Autowired
     private IProductService iProductService;
-    @Autowired
-    private ISolrService iSolrService;
 
-    //产品详细
+    //通过产品Id获取产品详细
     @RequestMapping("detail.do")
     @ResponseBody
     public ServerResponse<ProductVO> detail(Integer productId)
@@ -34,7 +31,7 @@ public class ProductController {
         return ServerResponse.createByErrorMessage("参数错误");
     }
 
-    //所有产品
+    //通过 产品关键字或者产品分类 获取产品集合
     @RequestMapping("list.do")
     @ResponseBody
     public ServerResponse<PageInfo> getProductsByNameOrCategory(
@@ -50,14 +47,4 @@ public class ProductController {
         return iProductService.getProductByKeywordOrCategory(keyword, categoryId, pageNum, pageSize, orderBy);
     }
 
-
-    //查看产品通过solr
-    @RequestMapping("get_product_list_by_solr.do")
-    @ResponseBody
-    public ServerResponse<PageInfo> getProductListBySolr(@RequestParam(value = "keyword",required = false)String keyword,
-                                                         @RequestParam(value = "pageNum",defaultValue = "1")int pageNum,
-                                                         @RequestParam(value = "pageSize",defaultValue = "10")int pageSize)
-    {
-        return iSolrService.getProductListBySolr(keyword,pageNum,pageSize);
-    }
 }

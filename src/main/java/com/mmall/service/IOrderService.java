@@ -23,5 +23,6 @@ public interface IOrderService {
     ServerResponse verifyAccepted(Integer id, Long orderNo);
     ServerResponse cancel(Boolean isManager,Integer user,Long orderNo);
     ServerResponse sendGoods(Long orderNo);
+    ServerResponse closeOrder(Long orderNo);
     ServerResponse pay(Long orderNo,Integer userId,String path);
 }

@@ -12,7 +12,6 @@ import com.mmall.pojo.Product;
 import com.mmall.service.ICartService;
 import com.mmall.util.BigDecimalUtil;
 import com.mmall.util.DateTimeUtil;
-import com.mmall.util.PropertiesUtil;
 import com.mmall.vo.CartItemVO;
 import com.mmall.vo.CartVO;
 import org.apache.commons.collections.CollectionUtils;
@@ -21,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -32,6 +30,7 @@ import java.util.List;
 public class CartServiceImpl implements ICartService {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private CartMapper cartMapper;
 
@@ -68,6 +67,7 @@ public class CartServiceImpl implements ICartService {
         }
     }
 
+    //添加购物条目
     @Override
     public ServerResponse add(Integer userId,Integer count,Integer productId)
     {
@@ -100,7 +100,7 @@ public class CartServiceImpl implements ICartService {
        }
     }
 
-    //修改购物车中产品的购买数量，返回数量
+    //修改购物车中产品的购买数量
     @Override
     public ServerResponse updateQuantiry(Integer userId,Integer count,Integer cartId)
     {

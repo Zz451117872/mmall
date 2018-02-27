@@ -39,12 +39,12 @@
         </param-value>
     </context-param>
 
-    <listener>
-        <listener-class>com.mmall.common.listener.RegisterOnlineUserListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.mmall.common.listener.OrderTimeoutAutoCancleListener</listener-class>
-    </listener>
+    <!--<listener>-->
+        <!--<listener-class>com.mmall.common.listener.RegisterOnlineUserListener</listener-class>-->
+    <!--</listener>-->
+    <!--<listener>-->
+        <!--<listener-class>com.mmall.common.listener.OrderTimeoutAutoCancleListener</listener-class>-->
+    <!--</listener>-->
 
 
 

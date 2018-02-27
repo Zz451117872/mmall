@@ -1,21 +1,16 @@
 package com.mmall.controller.protal;
 
-import com.github.pagehelper.PageInfo;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Shipping;
 import com.mmall.pojo.User;
 import com.mmall.service.IShippingService;
-import com.mmall.vo.ShippingVO;
-import com.sun.javafx.collections.MappingChange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
@@ -31,6 +26,7 @@ public class ShippingController {
     @Autowired
     private IShippingService iShippingService;
 
+    //添加或者修改地址
     @RequestMapping("add_or_update_shipping.do")
     @ResponseBody
     public ServerResponse<Map> addOrUpdateShipping(HttpSession session , @Valid Shipping shipping , BindingResult bindingResult)
@@ -47,7 +43,7 @@ public class ShippingController {
         return iShippingService.addOrUpdateShipping(user.getId(),shipping);
     }
 
-
+    //删除地址
     @RequestMapping("delete_shipping.do")
     @ResponseBody
     public ServerResponse<String> delete(HttpSession session , Integer shippingId) {
@@ -61,6 +57,7 @@ public class ShippingController {
         return ServerResponse.createByErrorMessage("参数错误");
     }
 
+    //获取所有地址
     @RequestMapping("list.do")
     @ResponseBody
     private ServerResponse<List<Shipping>> list(HttpSession session)
@@ -73,6 +70,7 @@ public class ShippingController {
         return iShippingService.list(user.getId());
     }
 
+    //获取单个地址
     @RequestMapping("shipping.do")
     @ResponseBody
     private ServerResponse<Shipping> getShipping(HttpSession session,Integer shippingId)

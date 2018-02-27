@@ -25,8 +25,10 @@ public class FileServiceImpl implements IFileService {
 
     public String uploadFile(File file,String path)
     {
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxx");
         String fileName =file.getName();
         System.out.println("fileName:"+fileName);
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxx");
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".")+1);
         String uploadFileName = UUID.randomUUID()+"."+fileExtensionName;
         logger.info("开始上传文件，文件名{}新文件名{}",fileName,uploadFileName);
@@ -100,7 +102,7 @@ public class FileServiceImpl implements IFileService {
         String fileName =file.getOriginalFilename();
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".")+1);
         String uploadFileName = UUID.randomUUID()+"."+fileExtensionName;
-        logger.info("开始上传文件，文件名{}路径{}新文件名{}",fileName,path,uploadFileName);
+        logger.info("开始上传文件，文件名{}, 路径{} , 新文件名{}",fileName,path,uploadFileName);
 
         File fileDir = new File(path);
         if(!fileDir.exists())
@@ -112,12 +114,12 @@ public class FileServiceImpl implements IFileService {
         try {
             file.transferTo(targerFile);
             //将文件上传至FTP服务器
-//           boolean result =  FTPUtil.uploadFile(Lists.<File>newArrayList(targerFile));
+           boolean result =  FTPUtil.uploadFile(Lists.<File>newArrayList(targerFile));
             //将文件删除掉
-//            if(result)
-//            {
-//                targerFile.delete();
-//            }
+            if(result)
+            {
+                targerFile.delete();
+            }
 
         } catch (IOException e) {
             logger.error("文件上传异常",e);
