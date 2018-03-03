@@ -176,12 +176,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  
-  <delete id="deleteByShippingidAndUserid" parameterType="map">
-    DELETE from mmall_shipping
-    where user_id = #{userId}
-    and id = #{shippingId}
-  </delete>
+
 
 
   <update id="updateByShipping" parameterType="com.mmall.pojo.Shipping" >
@@ -200,17 +195,15 @@
     where id = #{id,jdbcType=INTEGER}
     and user_id =#{userId,jdbcType=INTEGER}
   </update>
-  
-  
-  <select id="selectByUseridAndShippingid" resultMap="BaseResultMap" parameterType="map">
-    SELECT 
-    <include refid="Base_Column_List"></include>
-    from mmall_shipping
-    where id=#{shippingId}
-    and user_id =#{userId}
-  </select>
 
+  <!--通过收货地址id　和 用户id 删除 收货地址-->
+  <delete id="deleteByShippingidAndUserid" parameterType="map">
+    DELETE from mmall_shipping
+    where user_id = #{userId}
+    and id = #{shippingId}
+  </delete>
 
+  <!--通过用户id查询所有收货地址-->
   <select id="selectByUserid" resultMap="BaseResultMap" parameterType="int">
     SELECT 
     <include refid="Base_Column_List"></include>

@@ -9,6 +9,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
+/*
+ *FTP 工具
+ */
 public class FTPUtil {
     private static  final Logger logger = LoggerFactory.getLogger(FTPUtil.class);
 
@@ -22,6 +25,8 @@ public class FTPUtil {
         this.user = user;
         this.pwd = pwd;
     }
+
+    //上传文件到 ftp服务器
     public static boolean uploadFile(List<File> fileList) throws IOException {
         FTPUtil ftpUtil = new FTPUtil(ftpIp,21,ftpUser,ftpPass);
         logger.info("开始连接ftp服务器");
@@ -30,20 +35,21 @@ public class FTPUtil {
         return result;
     }
 
+    //上传文件至 ftp服务 指定目录下，并返回是否上传成功
     private boolean uploadFile(String remotePath,List<File> fileList) throws IOException {
         boolean uploaded = true;
         FileInputStream fis = null;
-        //连接FTP服务器
+        //连接 并登录 FTP服务器
         if(connectServer(this.ip,this.port,this.user,this.pwd)){
             try {
-                ftpClient.changeWorkingDirectory(remotePath);
+                ftpClient.changeWorkingDirectory(remotePath);   //切换工作目录
                 ftpClient.setBufferSize(1024);
                 ftpClient.setControlEncoding("UTF-8");
                 ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                 ftpClient.enterLocalPassiveMode();
                 for(File fileItem : fileList){
                     fis = new FileInputStream(fileItem);
-                    ftpClient.storeFile(fileItem.getName(),fis);
+                    ftpClient.storeFile(fileItem.getName(),fis); //存储文件
                     System.out.println(fileItem.getName());
                 }
 
@@ -59,8 +65,7 @@ public class FTPUtil {
         return uploaded;
     }
 
-
-
+    //判断是否能连接指定ftp服务器
     private boolean connectServer(String ip,int port,String user,String pwd){
 
         boolean isSuccess = false;

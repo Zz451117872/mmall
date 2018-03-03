@@ -161,25 +161,18 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-
-  <select id="checkUsername" resultType="int" parameterType="string">
-      select count(1) from mmall_user
-      where username = #{username}
-  </select>
-  
-  <select id="checkEmail" resultType="int" parameterType="string">
-    select count(1) from mmall_user
-    where email =#{email}
-  </select>
-  
-  <select id="selectLogin" resultMap="BaseResultMap" parameterType="map">
+  <!--通过 用户名 和 用户密码 查询用户-->
+  <select id="getByUsernameAndPassword" resultMap="BaseResultMap" parameterType="map">
       select
     <include refid="Base_Column_List" />
     from mmall_user
     where username = #{username}
-    and password = #{password}
+    <if test="password != null ">
+      and password = #{password}
+    </if>
   </select>
-  
+
+  <!--通过用户名 查询 密码忘记问题-->
   <select id="selectQuestingByUsername" resultType="string" parameterType="string">
     select
     question
@@ -187,6 +180,7 @@
     where username =#{username}
   </select>
 
+  <!--通过 用户名 和 密码忘记问题 和 密码忘记问题答案 查询计数-->
   <select id="checkAnswer" resultType="int" parameterType="map">
     SELECT
     count(1)
@@ -195,29 +189,15 @@
     and question = #{question}
     and answer=#{answer}
   </select>
-  
+
+  <!--通过 用户名 更新 新密码-->
   <update id="updatePasswordByUsername" parameterType="map">
     UPDATE mmall_user
     set password =#{passwordNew},update_time=now()
     where username =#{username}
   </update>
   
-  <select id="checkPassword" resultType="int" parameterType="map">
-    SELECT
-    count(1)
-    from mmall_user
-    where id = #{userId}
-    and password = #{password}
-  </select>
-  
-  <select id="checkEmailByUserId" resultType="int" parameterType="map">
-    SELECT
-    count(1)
-    from mmall_user
-    where email =#{email}
-    and id != #{userId}
-  </select>
-
+  <!--通过用户关键字 或者 用户角色 查询用户集合-->
   <select id="getUserByUsernameOrRole" resultMap="BaseResultMap" parameterType="map">
     SELECT
     <include refid="Base_Column_List"/>
@@ -232,13 +212,7 @@
     </where>
   </select>
   
-  <select id="getByUsername" parameterType="string" resultMap="BaseResultMap">
-    SELECT 
-    <include refid="Base_Column_List"/>
-    from mmall_user
-    where username = #{username}
-  </select>
-  
+  <!--/通过 字段属性（具有唯一性的字段：username , email , phone ） 查询用户-->
   <select id="selectByCondition" parameterType="map" resultMap="BaseResultMap">
     SELECT 
     <include refid="Base_Column_List"/>

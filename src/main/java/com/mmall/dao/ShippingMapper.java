@@ -17,9 +17,13 @@ public interface ShippingMapper {
 
     int updateByPrimaryKeySelective(Shipping record);
 
-    int updateByPrimaryKey(Shipping record);
-    int deleteByShippingidAndUserid(@Param("shippingId") Integer shippingId, @Param("userId")Integer userId);
     int updateByShipping(Shipping record);
-    Shipping selectByUseridAndShippingid(@Param("shippingId") Integer shippingId, @Param("userId")Integer userId);
+
+    int updateByPrimaryKey(Shipping record);
+
+    //通过收货地址id　和 用户id 删除 收货地址
+    int deleteByShippingidAndUserid(@Param("shippingId") Integer shippingId, @Param("userId")Integer userId);
+
+    //通过用户id查询所有收货地址
     List<Shipping> selectByUserid(Integer userId);
 }

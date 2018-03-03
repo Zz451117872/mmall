@@ -17,10 +17,9 @@ public interface ProductMapper {
     int updateByPrimaryKeySelective(Product record);
 
     int updateByPrimaryKey(Product record);
-
-    List<Product> getList();
-
+    //通过产品名称 或者 产品id 查询产品
     Product getProductByNameOrId(@Param("productName") String productName, @Param("productId")Integer productId);
 
+    //通过产品名称关键字 或者 产品分类 查询产品集合，参数都为null时，查询所有产品
     List<Product> selectByNameOrCategoryIds(@Param("productName")String productName,@Param("categoryIds")List<Integer> categoryIds);
 }

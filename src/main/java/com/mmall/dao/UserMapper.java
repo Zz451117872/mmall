@@ -18,25 +18,21 @@ public interface UserMapper {
 
     int updateByPrimaryKey(User record);
 
-    int checkUsername(String username);
-
-    int checkEmail(String email);
-
+    //通过用户名 查询 密码忘记问题
     String selectQuestingByUsername(String username);
 
-    User selectLogin(@Param("username") String username, @Param("password") String password);
+    //通过 用户名 和 用户密码 查询用户
+    User getByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
 
+    //通过 用户名 和 密码忘记问题 和 密码忘记问题答案 查询计数
     int checkAnswer(@Param("username")String username,@Param("question")String question,@Param("answer")String answer);
 
+    //通过 用户名 更新 新密码
     int updatePasswordByUsername(@Param("username")String username,@Param("passwordNew")String passwordNew);
 
-    int checkPassword(@Param("password")String password,@Param("userId")Integer userId);
-
-    int checkEmailByUserId(@Param("email")String email,@Param("userId")Integer userId);
-
-    User getByUsername(String username);
-
+    //通过用户关键字 或者 用户角色 查询用户集合
     List<User> getUserByUsernameOrRole(@Param("username")String username,@Param("userRole") Integer userRole);
 
+    //通过 字段属性（具有唯一性的字段：username , email , phone ） 查询用户
     User selectByCondition(@Param("name")String name, @Param("value")String value);
 }

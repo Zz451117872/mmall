@@ -29,6 +29,7 @@
     </constructor-arg>
     </bean>
 
+    <!--自动注解代理-->
     <aop:aspectj-autoproxy/>
     <import resource="applicationContext-datasource.xml"/>
 </beans>

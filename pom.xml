@@ -49,6 +49,7 @@
       </exclusions>
     </dependency>
 
+    <!--tomcat -->
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
@@ -106,6 +107,7 @@
       <version>1.9.12</version>
     </dependency>
 
+    <!--连接池-->
     <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
@@ -258,7 +260,6 @@
       <version>2.9.0</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>

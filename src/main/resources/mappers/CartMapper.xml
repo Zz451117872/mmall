@@ -102,7 +102,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-
+  <!--通过用户id与产品id 查询 购物条目-->
   <select id="selectCartByUseridAndProductid" resultMap="BaseResultMap" parameterType="map">
     SELECT
     <include refid="Base_Column_List"/>
@@ -111,22 +111,20 @@
      and product_id = #{productId,jdbcType=INTEGER}
   </select>
 
-  <select id="selectCartByUserid" resultMap="BaseResultMap" parameterType="int">
-    SELECT 
-    <include refid="Base_Column_List"></include>
-    from mmall_cart
-    where user_id = #{userId}
-  </select>
 
+  <!--通过用户id 与 购物条目ids 查询购物条目集合, ids可能为空-->
   <select id="getByUserAndCartIds" parameterType="map" resultMap="BaseResultMap">
     SELECT 
     <include refid="Base_Column_List"/>
     from mmall_cart
     where user_id = #{userId}
-    and id in 
-    <foreach collection="cartIdList" index="index" item="item" open="(" separator="," close=")">
-      #{item}
-    </foreach>
+    <if test="cartIdList != null">
+      and id in
+      <foreach collection="cartIdList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+
   </select>
 
   <select id="getCartCount" parameterType="int" resultType="int">

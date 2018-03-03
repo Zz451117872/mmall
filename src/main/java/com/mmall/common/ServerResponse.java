@@ -7,12 +7,12 @@ import java.io.Serializable;
 
 /**
  * Created by aa on 2017/6/19.
- */
+ */                 //若属性值为null，则该属性不会转化为Json
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ServerResponse<T> implements Serializable{
-    private int status;
-    private String msg;
-    private T data;
+    private int status; //响应的状态
+    private String msg; //响应的消息
+    private T data;     //响应的数据
 
     private ServerResponse(int status)
     {
@@ -34,7 +34,7 @@ public class ServerResponse<T> implements Serializable{
         this.status = status;
         this.msg = msg;
     }
-    @JsonIgnore
+    @JsonIgnore         // 意思是该属性不会转化为json
     public boolean isSuccess()
     {
         return this.status == ResponseCode.SUCCESS.getCode();

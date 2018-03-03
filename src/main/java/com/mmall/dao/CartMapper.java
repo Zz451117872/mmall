@@ -2,7 +2,6 @@ package com.mmall.dao;
 
 import com.mmall.pojo.Cart;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -19,10 +18,12 @@ public interface CartMapper {
 
     int updateByPrimaryKey(Cart record);
 
-
+    //通过用户id与产品id 查询 购物条目
     Cart selectCartByUseridAndProductid(@Param(value = "userId") Integer userId, @Param(value = "productId")  Integer productId);
-    List<Cart> selectCartByUserid(Integer userId);
+
+    ////通过用户id 与 购物条目ids 查询购物条目集合,ids可以为空
     List<Cart> getByUserAndCartIds(@Param(value = "userId")Integer userId, @Param(value = "cartIdList")List<Integer> cartIdList);
 
+    //通过用户id 查询购物条目计数
     int getCartCount(Integer userId);
 }

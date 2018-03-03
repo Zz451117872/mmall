@@ -118,7 +118,7 @@ public class FileServiceImpl implements IFileService {
             //将文件删除掉
             if(result)
             {
-                targerFile.delete();
+               // targerFile.delete();
             }
 
         } catch (IOException e) {

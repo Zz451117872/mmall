@@ -109,12 +109,12 @@ public class UserServiceImpl implements IUserService{
     public ServerResponse<User> login(String username, String password) {
         try {
             if(StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password) ) {
-                int resultCount = userMapper.checkUsername(username);
-                if (resultCount == 0) {
+                User db_user = userMapper.selectByCondition("username",username);
+                if (db_user == null) {
                     return ServerResponse.createByErrorMessage("用户名或密码错误1");
                 }
                 String md5password = MD5Util.MD5EncodeUtf8(password);
-                User user = userMapper.selectLogin(username, md5password);
+                User user = userMapper.getByUsernameAndPassword(username, md5password);
                 if (user == null) {
                     return ServerResponse.createByErrorMessage("用户名或密码错误2");
                 }
@@ -134,17 +134,17 @@ public class UserServiceImpl implements IUserService{
         try {
             if(user != null && StringUtils.isNotEmpty(user.getUsername())) {
                 if (user.getId() == null) { //新增用户
-                    int resultCount = userMapper.checkUsername(user.getUsername());
-                    if (resultCount > 0) {
+                    User db_user = userMapper.selectByCondition("username",user.getUsername());
+                    if (db_user != null) {
                         return ServerResponse.createByErrorMessage("用户名已存在");
                     }
-                    resultCount = userMapper.checkEmail(user.getEmail());
-                    if (resultCount > 0) {
+                    db_user = userMapper.selectByCondition("email",user.getEmail());
+                    if (db_user != null) {
                         return ServerResponse.createByErrorMessage("email已存在");
                     }
                     user.setRole(Const.Role.ROLE_CUSTOMER);
                     user.setPassword(MD5Util.MD5EncodeUtf8(user.getPassword()));
-                    resultCount = userMapper.insertSelective(user);
+                    int resultCount = userMapper.insertSelective(user);
                     if (resultCount > 0) {
                         return ServerResponse.createBySuccessMessage("注册成功");
                     }
@@ -152,13 +152,13 @@ public class UserServiceImpl implements IUserService{
                 } else {
                     User db_user = userMapper.selectByPrimaryKey(user.getId());
                     if (db_user != null) {
-                        int resultCount = userMapper.checkUsername(user.getUsername());
-                        if (resultCount < 1 || user.getUsername().equals(db_user.getUsername())) {
-                            resultCount = userMapper.checkEmail(user.getEmail());
-                            if (resultCount < 1 || user.getEmail().equals(db_user.getEmail())) {
+                        User check_user = userMapper.selectByCondition("username",user.getUsername());
+                        if (check_user == null || user.getUsername().equals(db_user.getUsername())) {
+                            check_user = userMapper.selectByCondition("email",user.getEmail());
+                            if (check_user ==null || user.getEmail().equals(db_user.getEmail())) {
                                 user.setRole(null);     //意思是这两个属性不能修改
                                 user.setPassword(null);
-                                resultCount = userMapper.updateByPrimaryKeySelective(user);
+                                int resultCount = userMapper.updateByPrimaryKeySelective(user);
                                 if (resultCount > 0) {
                                     return ServerResponse.createBySuccessMessage("更新成功");
                                 }

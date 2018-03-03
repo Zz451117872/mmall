@@ -19,14 +19,11 @@ public interface OrderMapper {
 
     int updateByPrimaryKey(Order record);
 
+    //通过用户Id 和 订单号 查询订单，用户id主要用来防止越权
     Order selectByUseridAndOrderno(@Param(value = "userId") Integer userId,@Param(value = "orderNo") Long orderNo);
 
-    Order selectByOrderno(Long orderNo);
 
-    List<Order> selectAll();
-
-    List<Order> selectByUseridOrStatus(@Param(value = "userId")Integer userId, @Param(value = "status")Integer status);
-
+    //通过 用户id 或者 订单状态 或者 下单时间 查询订单集合，若都为null，则查询所有
     List<Order> getOrderByMultiCondition(@Param(value = "userId")Integer userId,
                                          @Param(value = "orderStatus")Integer orderStatus,
                                          @Param(value = "createTime")String createTime);

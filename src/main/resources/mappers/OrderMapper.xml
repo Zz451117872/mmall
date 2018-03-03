@@ -185,44 +185,20 @@
       update_time = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
-  
+
+  <!--通过用户Id 和 订单号 查询订单, 用户id 可以为空-->
   <select id="selectByUseridAndOrderno" resultMap="BaseResultMap" parameterType="map">
     SELECT 
     <include refid="Base_Column_List"></include>
     from mmall_order
-    where user_id = #{userId}
-    and id = #{orderNo}
-  </select>
-
-  <select id="selectByOrderno" resultMap="BaseResultMap" parameterType="long">
-    SELECT
-    <include refid="Base_Column_List"></include>
-    from mmall_order
     where id = #{orderNo}
-  </select>
-  
-  <select id="selectAll" resultMap="BaseResultMap" >
-    SELECT 
-    <include refid="Base_Column_List"></include>
-    from mmall_order
-    order by create_time desc;
-  </select>
-  
-  <select id="selectByUseridOrStatus" parameterType="map" resultMap="BaseResultMap">
-    SELECT 
-    <include refid="Base_Column_List"/>
-    from mmall_order
-    <where>
-      <if test="userId != null">
-        and user_id = #{userId}
-      </if>
-      <if test="status != null">
-        and status = #{status}
-      </if>
-    </where>
-    order by create_time desc
+    <if test="userId != null">
+      and user_id = #{userId}
+    </if>
+
   </select>
 
+  <!--通过 用户id 或者 订单状态 或者 下单时间 查询订单集合-->
   <select id="getOrderByMultiCondition" parameterType="map" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
@@ -239,4 +215,5 @@
       </if>
     </where>
   </select>
+
 </mapper>

@@ -173,14 +173,8 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
-  
-  <select id="getList" resultMap="BaseResultMap">
-    SELECT
-    <include refid="Base_Column_List" />
-    from mmall_product
-    order by id ASC
-  </select>
-  
+
+  <!--通过产品名称 或者 产品id 查询产品-->
   <select id="getProductByNameOrId" resultMap="BaseResultMap" parameterType="map">
     SELECT
     <include refid="Base_Column_List" />
@@ -194,7 +188,8 @@
       </if>
     </where>
   </select>
-  
+
+  <!--通过产品名称关键字 或者 产品分类 查询产品集合，参数都为null时，查询所有产品-->
   <select id="selectByNameOrCategoryIds" resultMap="BaseResultMap" parameterType="map">
     SELECT
     <include refid="Base_Column_List" />

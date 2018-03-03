@@ -148,7 +148,7 @@ public class CartServiceImpl implements ICartService {
     {
         try {
             if(userId != null) {
-                List<Cart> cartList = cartMapper.selectCartByUserid(userId);
+                List<Cart> cartList = cartMapper.getByUserAndCartIds(userId,null);
                 if(cartList != null && !cartList.isEmpty()) {
                     return ServerResponse.createBySuccess(convertCartVO(cartList));
                 }
@@ -200,7 +200,7 @@ public class CartServiceImpl implements ICartService {
                 cartItemVO.setProductPrice(product.getPrice().doubleValue());
                 cartItemVO.setProductStock(product.getStock());
                 cartItemVO.setCreateTime(DateTimeUtil.dateToStr(cart.getCreateTime()));
-                //判断库存
+                //判断库存，如果产品库存足够，则表示限制成功，购买数量不变，若库存不够，则表示限制失败，数据数量为产品库存。
                 int buyLimitCount = 0;
                 if (product.getStock() >= cart.getQuantity()) {
                     buyLimitCount = cart.getQuantity();

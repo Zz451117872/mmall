@@ -17,7 +17,7 @@ public class TokenCache {
             initialCapacity(1000).
             maximumSize(10000).expireAfterAccess(1, TimeUnit.HOURS)
             .build(new CacheLoader<String, String>() {
-                @Override
+                @Override           //意思是当找不到对应的键时返回什么结果
                 public String load(String key) throws Exception {
                     return "null";
                 }

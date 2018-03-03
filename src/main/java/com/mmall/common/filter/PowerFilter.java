@@ -6,6 +6,7 @@ import java.io.IOException;
 
 /**
  * Created by aa on 2017/7/2.
+ * CROS跨域过滤器
  */
 public class PowerFilter implements Filter {
     @Override

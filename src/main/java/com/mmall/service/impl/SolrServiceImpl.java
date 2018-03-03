@@ -95,7 +95,7 @@ public class SolrServiceImpl implements ISolrService {
     {
         int start = 1;
         PageInfo pageInfo = null ; //iProductService.getProductListToSolr(start,100);
-        List<Product> productList = pageInfo.getList();
+        List<Product> productList = null;//pageInfo.getList();
         try {
             fillProductListToSolr(productList);
         } catch (Exception e) {

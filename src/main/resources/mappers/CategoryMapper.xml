@@ -118,7 +118,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-
+  <!--通过产品分类名 获取 产品分类-->
   <select id="getByCategoryName" parameterType="string" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
@@ -126,6 +126,7 @@
     where name = #{name}
   </select>
 
+  <!--通过父类产品分类 获取 子分类-->
   <select id="getChildCategory" parameterType="int" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
@@ -133,6 +134,7 @@
     where parent_id = #{parentId}
   </select>
 
+  <!--更新产品分类状态 对 传入的产品分类id-->
   <update id="updateCategoryStatusByCategoryIds" parameterType="list">
     UPDATE mmall_category
     set status = #{status}

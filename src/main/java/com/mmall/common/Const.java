@@ -10,9 +10,13 @@ import java.util.Set;
 public class Const {
     //当前用户
     public static final String CURRENT_USER = "currentUser";
+    //购物车容量上限
     public static final Integer cartCapacityUpperLimit = 10;
+    //收货地址容量上限
     public static final Integer shippingCapacityUpperLimit = 6;
+    //订单支付超时上限
     public static final Integer orderPayTimeoutLimit = 10*60*1000; //分钟
+    //原始密码
     public static final String INITIAL_PASSWORD = "1234";
 
     //购物条目 在购物车中的状态
@@ -20,11 +24,17 @@ public class Const {
         String LIMIT_NUM_FAIL = "LIMIT_NUM_FAIL";
         String LIMIT_NUM_SUCCESS="LIMIT_NUM_SUCCESS";
     }
+
+    //排序字段集合
     public interface MmallOrderbySet{
-        Set<String > orderbySet = Sets.newHashSet("price:asc","price:desc","create_time&desc","create_time:asc");
+        Set<String > orderbySet = Sets.newHashSet(
+                "price:asc",        //产品价格 升序
+                "price:desc",
+                "create_time:desc",
+                "create_time:asc");
     }
 
-    //角色
+    //角色权限
     public interface Role{
         int ROLE_CUSTOMER = 0; //用户
         int ROLE_ADMIN = 1;     //管理者
@@ -113,7 +123,7 @@ public class Const {
         }
     }
 
-    //支付宝回调
+    //支付宝回调状态
     public interface AlipayCallable{
         String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
         String TRADE_STATUS_TRADE_SUCCESS = "TRADE_SUCCESS";
@@ -151,6 +161,7 @@ public class Const {
         }
     }
 
+    //用户 状态
     public enum UserStatusEnum{
         NORMAL_USER(0,"正常"),
         NONACTIVATED_USER(1,"未激活"),
@@ -183,6 +194,7 @@ public class Const {
         }
     }
 
+    //产品分类状态
     public enum CategoryStatusEnum{
         USEING(1,"使用中"),
         DEPRECATED(0,"已弃用");
@@ -213,7 +225,7 @@ public class Const {
         }
     }
 
-
+    //错误类型枚举
     public enum ErrorEnum{
         DATA_VERIFY_ERROR(100,"数据校验错误"),
         DATABASE_ERROR(101,"数据库操作错误"),

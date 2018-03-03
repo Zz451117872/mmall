@@ -39,9 +39,11 @@
         </param-value>
     </context-param>
 
+    <!--在线人员统计-->
     <!--<listener>-->
         <!--<listener-class>com.mmall.common.listener.RegisterOnlineUserListener</listener-class>-->
     <!--</listener>-->
+    <!--订单支付超时自动取消订单线程-->
     <!--<listener>-->
         <!--<listener-class>com.mmall.common.listener.OrderTimeoutAutoCancleListener</listener-class>-->
     <!--</listener>-->

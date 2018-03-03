@@ -264,7 +264,7 @@ public class OrderServiceImpl implements IOrderService {
     @Transactional
     private void recoverProductStock(Long orderNo)
     {
-        List<OrderItem> orderItemList = orderItemMapper.getByOrderno(orderNo);
+        List<OrderItem> orderItemList = orderItemMapper.getByOrderOrUser(orderNo,null);
         if(orderItemList != null && !orderItemList.isEmpty())
         {
             for(OrderItem orderItem : orderItemList)
@@ -328,7 +328,7 @@ public class OrderServiceImpl implements IOrderService {
                 if (userId != null) {                           //用户查询订单
                     order = orderMapper.selectByUseridAndOrderno(userId, orderNo);
                 } else {                      //管理员查询订单
-                    order = orderMapper.selectByOrderno(orderNo);
+                    order = orderMapper.selectByUseridAndOrderno(null,orderNo);
                 }
                 if (order != null) {
                     List<OrderItem> orderItemList = orderItemMapper.getByOrderOrUser(orderNo, userId);
@@ -351,7 +351,7 @@ public class OrderServiceImpl implements IOrderService {
         try {
             if(userId != null  && pageNum != null && pageSize != null) {
                 PageHelper.startPage(pageNum, pageSize);
-                List<Order> orderList = orderMapper.selectByUseridOrStatus(userId, status);
+                List<Order> orderList = orderMapper.getOrderByMultiCondition(userId, status,null);
                 if(orderList != null && !orderList.isEmpty()) {
                     List<OrderVO> orderVOList = convertOrderVOs(userId, orderList);
                     PageInfo pageInfo = new PageInfo(orderList);
@@ -375,7 +375,7 @@ public class OrderServiceImpl implements IOrderService {
             {
                 if(username != null && !"".equals(username))
                 {
-                    User user = userMapper.getByUsername(username);
+                    User user = userMapper.getByUsernameAndPassword(username,null);
                     if(user != null)
                     {
                         userId = user.getId();
@@ -429,7 +429,7 @@ public class OrderServiceImpl implements IOrderService {
     {
         try {
             if(orderNo != null) {
-                Order order = orderMapper.selectByOrderno(orderNo);
+                Order order = orderMapper.selectByUseridAndOrderno(null,orderNo);
                 if (order != null) {
                     if (order.getStatus() == Const.OrderStatusEnum.PAID.getCode()) {
                         order.setStatus(Const.OrderStatusEnum.SHIPPED.getCode());
@@ -456,7 +456,7 @@ public class OrderServiceImpl implements IOrderService {
     public ServerResponse closeOrder(Long orderNo){
         try {
             if(orderNo != null) {
-                Order order = orderMapper.selectByOrderno(orderNo);
+                Order order = orderMapper.selectByUseridAndOrderno(null,orderNo);
                 if (order != null) {
                     if (order.getStatus() == Const.OrderStatusEnum.SUCCESS.getCode()) {
                         order.setStatus(Const.OrderStatusEnum.CLOSED.getCode());
@@ -683,7 +683,7 @@ public class OrderServiceImpl implements IOrderService {
     {
         try {
             if(userId != null && orderNo != null) {
-                Order order = orderMapper.selectByOrderno(orderNo);
+                Order order = orderMapper.selectByUseridAndOrderno(userId,orderNo);
                 if (order != null) {
                     if (order.getStatus() >= Const.OrderStatusEnum.PAID.getCode()) {
                         return ServerResponse.createBySuccess();
@@ -709,7 +709,7 @@ public class OrderServiceImpl implements IOrderService {
         String tradeNo = parmas.get("trade_no");
         String tradeStatus = parmas.get("trade_status");
 
-        Order order =orderMapper.selectByOrderno(orderNo);
+        Order order =orderMapper.selectByUseridAndOrderno(null,orderNo);
         if(order == null)
         {   // 订单不存在
             return ServerResponse.createByErrorMessage("不是我的订单，免疫");

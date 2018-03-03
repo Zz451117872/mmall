@@ -21,6 +21,7 @@ import java.util.List;
 
 /**
  * Created by aa on 2017/12/26.
+ * 订单支付超时自动取消
  */
 public class OrderTimeoutAutoCancleThread extends Thread {
 
